@@ -1,0 +1,148 @@
+﻿<UserControl x:Class="erp_system.view.Dashboard_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:erp_system.view"
+             xmlns:Stat_View="clr-namespace:erp_system.custom_controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Top Summary -->
+                <RowDefinition Height="*"/>
+                <!-- Sales + Recent Activity -->
+                <RowDefinition Height="Auto"/>
+                <!-- Quick Actions -->
+            </Grid.RowDefinitions>
+
+            <!-- ====== TOP SUMMARY CARDS ====== -->
+            <UniformGrid Grid.Row="0" Columns="4" Margin="0,0,0,20" HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                         IsItemsHost="False">
+                <!-- Total Employees -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Total Employees" FontWeight="SemiBold" Foreground="#555"/>
+                        <TextBlock Text="0" FontSize="20" FontWeight="Bold"/>
+                        <Border Background="#FFD84D" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
+                            <TextBlock Text="👥" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Monthly Sales -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Monthly Sales" FontWeight="SemiBold" Foreground="#555"/>
+                        <TextBlock Text="₱0" FontSize="20" FontWeight="Bold"/>
+                        <Border Background="#A7F3D0" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
+                            <TextBlock Text="💲" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Pending Leaves -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Pending Leaves" FontWeight="SemiBold" Foreground="#555"/>
+                        <TextBlock Text="0" FontSize="20" FontWeight="Bold"/>
+                        <Border Background="#FCD34D" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
+                            <TextBlock Text="📅" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Active Consultants -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Active Consultants" FontWeight="SemiBold" Foreground="#555"/>
+                        <TextBlock Text="0" FontSize="20" FontWeight="Bold"/>
+                        <Border Background="#E9D5FF" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
+                            <TextBlock Text="👤" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- ====== MIDDLE SECTION ====== -->
+            <Grid Grid.Row="1" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Monthly Sales Performance -->
+                <Border Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Monthly Sales Performance" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <Border Background="#F9FAFB" CornerRadius="8" Padding="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <TextBlock Text="Sales Chart - Implementation needed" Foreground="#777" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Recent Activity -->
+                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Recent Activity" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <StackPanel Margin="0,5">
+                            <TextBlock Text="New sale recorded" Foreground="Green" FontWeight="SemiBold"/>
+                            <TextBlock Text="Midnight Elegance – ₱1,250" FontSize="12" Foreground="#666"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,5">
+                            <TextBlock Text="Leave application submitted" Foreground="#3B82F6" FontWeight="SemiBold"/>
+                            <TextBlock Text="Maria Santos – Vacation leave" FontSize="12" Foreground="#666"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,5">
+                            <TextBlock Text="New employee added" Foreground="#A855F7" FontWeight="SemiBold"/>
+                            <TextBlock Text="John Doe – Sales Consultant" FontSize="12" Foreground="#666"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ====== QUICK ACTIONS ====== -->
+            <UniformGrid Grid.Row="2" Columns="4" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <!-- Add Employee -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="👥" FontSize="20"/>
+                        <TextBlock Text="Add Employee" FontWeight="Bold"/>
+                        <TextBlock Text="Create new employee profile" FontSize="12" Foreground="#777"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Record Sale -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="💲" FontSize="20"/>
+                        <TextBlock Text="Record Sale" FontWeight="Bold"/>
+                        <TextBlock Text="Add new perfume sale" FontSize="12" Foreground="#777"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Process Payroll -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="👤" FontSize="20"/>
+                        <TextBlock Text="Process Payroll" FontWeight="Bold"/>
+                        <TextBlock Text="Calculate monthly payroll" FontSize="12" Foreground="#777"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Generate Report -->
+                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="📅" FontSize="20"/>
+                        <TextBlock Text="Generate Report" FontWeight="Bold"/>
+                        <TextBlock Text="Export business reports" FontSize="12" Foreground="#777"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
