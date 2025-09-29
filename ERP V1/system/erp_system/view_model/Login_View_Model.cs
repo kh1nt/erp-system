@@ -13,9 +13,9 @@ namespace erp_system.view_model
     public class Login_View_Model : View_Model_Base
     {
         //Fields
-        private string _username;
-        private SecureString _password;
-        private string _error_message;
+        private string _username = string.Empty;
+        private SecureString? _password;
+        private string _error_message = string.Empty;
         private bool _is_view_visible = true;
 
         private readonly IUser_Repository User_Repositroy;
@@ -31,7 +31,7 @@ namespace erp_system.view_model
                 OnPropertyChanged(nameof(Username));
             }
         }
-        public SecureString Password
+        public SecureString? Password
         {
             get => _password;
 
@@ -64,10 +64,10 @@ namespace erp_system.view_model
 
         // -> Commands
         public ICommand Login_Command { get; }
-        public ICommand Logout_Command { get; }
-        public ICommand Recover_Password_Command { get; }
-        public ICommand Show_Password_Command { get; }
-        public ICommand Remember_Password_Command { get; }
+        public ICommand Logout_Command { get; } = new View_Model_Command(_ => { });
+        public ICommand Recover_Password_Command { get; } = new View_Model_Command(_ => { });
+        public ICommand Show_Password_Command { get; } = new View_Model_Command(_ => { });
+        public ICommand Remember_Password_Command { get; } = new View_Model_Command(_ => { });
 
         //Constructors
         public Login_View_Model()
@@ -78,7 +78,7 @@ namespace erp_system.view_model
         }
 
 
-        private bool Can_Execute_Login_Command(object obj)
+        private bool Can_Execute_Login_Command(object? obj)
         {
             bool valid_data;
             if (string.IsNullOrWhiteSpace(Username) || Username.Length < 3 || Password == null || Password.Length < 3)
@@ -89,18 +89,27 @@ namespace erp_system.view_model
 
         }
 
-        private void Execute_Login_Command(object obj)
+        private void Execute_Login_Command(object? obj)
         {
-            var Is_Valid_User = User_Repositroy.Authenticate_User(new NetworkCredential(Username, Password));
-            if (Is_Valid_User)
+            try
             {
-                Thread.CurrentPrincipal = new GenericPrincipal(
-                    new GenericIdentity(Username), null);
-                Is_View_Visible = false;
+                var Is_Valid_User = User_Repositroy.Authenticate_User(new NetworkCredential(Username, Password));
+                if (Is_Valid_User)
+                {
+                    Thread.CurrentPrincipal = new GenericPrincipal(
+                        new GenericIdentity(Username), null);
+                    Is_View_Visible = false;
+                    Error_Message = string.Empty; // Clear any previous errors
+                }
+                else
+                {
+                    Error_Message = "Invalid username or password";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Error_Message = "Invalid username or password";
+                Error_Message = "Database connection error. Please check your connection.";
+                System.Diagnostics.Debug.WriteLine($"Login error: {ex.Message}");
             }
         }
 

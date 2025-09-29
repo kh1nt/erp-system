@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:view_model="clr-namespace:erp_system.view_model"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="20">
@@ -24,32 +24,43 @@
                     <Border Background="White" CornerRadius="6" BorderBrush="#DDD" BorderThickness="1" Padding="10" Width="250">
                         <DockPanel>
                             <TextBlock Text="🔍" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            <TextBox Text="Search employees..." BorderThickness="0" Background="Transparent"/>
+                            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"/>
                         </DockPanel>
                     </Border>
 
                     <!-- Department Filter -->
-                    <ComboBox Width="200" Height="40" Padding="5" Background="White" BorderBrush="#DDD" BorderThickness="1">
-                        <ComboBoxItem Content="All Departments" IsSelected="True"/>
-                        <ComboBoxItem Content="Sales"/>
-                        <ComboBoxItem Content="HR"/>
-                        <ComboBoxItem Content="Finance"/>
-                        <ComboBoxItem Content="IT"/>
+                    <ComboBox Width="200" Height="40" Padding="5" Background="White" BorderBrush="#DDD" BorderThickness="1"
+                              ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDepartment}" DisplayMemberPath="DepartmentName">
                     </ComboBox>
                 </StackPanel>
 
                 <!-- Right: Add Employee -->
-                <Button DockPanel.Dock="Right" Content=" + Add Employee " Width="140" Height="40" Margin="10,0,0,0"
-                        Background="#FACC15" Foreground="Black" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                        HorizontalAlignment="Right"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="Refresh" Width="100" Height="40" Margin="0,0,10,0"
+                            Background="#E5E7EB" Foreground="#111827" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                            Command="{Binding Refresh_Command}"/>
+                    <Button Content=" + Add Employee " Width="140" Height="40"
+                            Background="#FACC15" Foreground="Black" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                </StackPanel>
             </DockPanel>
 
             <!-- ===== EMPLOYEE LIST ===== -->
             <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="20" BorderBrush="#EEE" BorderThickness="1">
                 <StackPanel>
-                    <TextBlock Text="All Employees (0)" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                    <TextBlock Text="No employees found" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Foreground="#666" FontSize="14" Padding="40"/>
+                    <TextBlock Text="{Binding FilteredEmployees.Count, StringFormat=All Employees ({0})}" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                    <DataGrid ItemsSource="{Binding FilteredEmployees}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False"
+                              GridLinesVisibility="None" RowHeaderWidth="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding EmployeeID}" Width="60"/>
+                            <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*"/>
+                            <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="*"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
+                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="*"/>
+                            <DataGridTextColumn Header="Position" Binding="{Binding Position}" Width="*"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                            <DataGridTextColumn Header="DepartmentID" Binding="{Binding DepartmentID}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </StackPanel>
             </Border>
         </Grid>

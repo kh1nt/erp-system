@@ -8,11 +8,11 @@ namespace erp_system.model
 {
     public class User_Model
     {
-        public string Id {  get; set; }
-        public string Username {  get; set; }
-        public string Password {  get; set; }
-        public string First_Name {  get; set; }
-        public string Last_Name {  get; set; }
-        public string Email {  get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string First_Name { get; set; } = string.Empty;
+        public string Last_Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }

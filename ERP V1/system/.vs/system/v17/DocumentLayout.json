@@ -1,46 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\",
+  "WorkspaceRootPath": "C:\\Users\\khint\\source\\repos\\erp-system\\ERP V1\\system\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\main_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\khint\\source\\repos\\erp-system\\erp v1\\system\\erp_system\\view\\main_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\main_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\payroll_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\payroll_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\styles\\color_resources.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\styles\\color_resources.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view_model\\main_view_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view_model\\main_view_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\dashboard_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\dashboard_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\performance_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\performance_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\insights_analytics_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\insights_analytics_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\leave_management_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\leave_management_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\sales_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\sales_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|c:\\users\\giedel\\documents\\github\\erp v1\\system\\erp_system\\view\\employees_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{3C74E77F-9CD6-42B9-B5DC-30B924F13CC5}|erp_system\\erp_system.csproj|solutionrelative:erp_system\\view\\employees_view.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -56,116 +20,13 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Main_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Main_View.xaml",
+              "DocumentMoniker": "C:\\Users\\khint\\source\\repos\\erp-system\\ERP V1\\system\\erp_system\\view\\Main_View.xaml",
               "RelativeDocumentMoniker": "erp_system\\view\\Main_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Main_View.xaml",
+              "ToolTip": "C:\\Users\\khint\\source\\repos\\erp-system\\ERP V1\\system\\erp_system\\view\\Main_View.xaml",
               "RelativeToolTip": "erp_system\\view\\Main_View.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-15T08:42:06.367Z",
-              "IsPinned": true,
+              "WhenOpened": "2025-09-24T11:02:44.938Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Color_Resources.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\styles\\Color_Resources.xaml",
-              "RelativeDocumentMoniker": "erp_system\\styles\\Color_Resources.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\styles\\Color_Resources.xaml",
-              "RelativeToolTip": "erp_system\\styles\\Color_Resources.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T03:37:43.512Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Payroll_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Payroll_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Payroll_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Payroll_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Payroll_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T02:58:23.933Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Insights_Analytics_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Insights_Analytics_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Insights_Analytics_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Insights_Analytics_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Insights_Analytics_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T02:48:42.508Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Leave_Management_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Leave_Management_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Leave_Management_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Leave_Management_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Leave_Management_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T02:46:25.295Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Performance_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Performance_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Performance_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Performance_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Performance_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T02:40:09.307Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Employees_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Employees_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Employees_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Employees_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Employees_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T02:24:08.881Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Dashboard_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Dashboard_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Dashboard_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Dashboard_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Dashboard_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-18T02:18:37.714Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Main_View_Model.cs",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view_model\\Main_View_Model.cs",
-              "RelativeDocumentMoniker": "erp_system\\view_model\\Main_View_Model.cs",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view_model\\Main_View_Model.cs",
-              "RelativeToolTip": "erp_system\\view_model\\Main_View_Model.cs",
-              "ViewState": "AgIAAGIAAAAAAAAAAAAqwHgAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-16T07:47:13.177Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Sales_View.xaml",
-              "DocumentMoniker": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Sales_View.xaml",
-              "RelativeDocumentMoniker": "erp_system\\view\\Sales_View.xaml",
-              "ToolTip": "C:\\Users\\Giedel\\Documents\\Github\\ERP V1\\system\\erp_system\\view\\Sales_View.xaml",
-              "RelativeToolTip": "erp_system\\view\\Sales_View.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-16T07:46:27.113Z"
             }
           ]
         }

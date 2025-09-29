@@ -1,0 +1,85 @@
+<Window x:Class="erp_system.view.SalesDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding DialogTitle}" Height="520" Width="620"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#F8F9FA">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header with Icon -->
+        <Border Grid.Row="0" Background="White" CornerRadius="6" Padding="12" Margin="0,0,0,10" 
+                BorderBrush="#E0E0E0" BorderThickness="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="💰" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding DialogTitle}" FontSize="16" FontWeight="Bold" 
+                           Foreground="#2C3E50" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Form Container -->
+        <Border Grid.Row="1" Background="White" CornerRadius="6" Padding="15" 
+                BorderBrush="#E0E0E0" BorderThickness="1">
+            <StackPanel>
+                <!-- Sale Date -->
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock Text="📅 Sale Date *" FontWeight="SemiBold" FontSize="12" 
+                               Margin="0,0,0,4" Foreground="#34495E"/>
+                    <DatePicker SelectedDate="{Binding SaleDate}" Width="200" HorizontalAlignment="Left" 
+                               FontSize="12" Padding="6,4" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                               BorderThickness="1"/>
+                </StackPanel>
+
+                <!-- Amount -->
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock Text="💵 Amount *" FontWeight="SemiBold" FontSize="12" 
+                               Margin="0,0,0,4" Foreground="#34495E"/>
+                    <TextBox Text="{Binding Amount}" Width="200" HorizontalAlignment="Left" 
+                            Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                            BorderThickness="1"/>
+                </StackPanel>
+
+                <!-- Employee -->
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock Text="👤 Employee *" FontWeight="SemiBold" FontSize="12" 
+                               Margin="0,0,0,4" Foreground="#34495E"/>
+                    <ComboBox ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee}" 
+                              DisplayMemberPath="FullName" Width="350" HorizontalAlignment="Left" 
+                              FontSize="12" Padding="8,6" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                              BorderThickness="1"/>
+                </StackPanel>
+
+                <!-- Description -->
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock Text="📝 Description" FontWeight="SemiBold" FontSize="12" 
+                               Margin="0,0,0,4" Foreground="#34495E"/>
+                    <TextBox Text="{Binding Description}" Width="400" Height="80" HorizontalAlignment="Left" 
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" 
+                             Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                             BorderThickness="1"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Buttons with Enhanced Styling -->
+        <Border Grid.Row="2" Background="White" CornerRadius="6" Padding="12" Margin="0,10,0,0" 
+                BorderBrush="#E0E0E0" BorderThickness="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="❌ Cancel" Command="{Binding Cancel_Command}" 
+                        Padding="15,6" Margin="0,0,8,0" Background="#E74C3C" Foreground="White" 
+                        BorderThickness="0" FontSize="12" FontWeight="SemiBold"
+                        Cursor="Hand"/>
+                <Button Content="{Binding SaveButtonText}" Command="{Binding Save_Command}" 
+                        Padding="15,6" Background="#27AE60" Foreground="White" BorderThickness="0" 
+                        FontSize="12" FontWeight="SemiBold" Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

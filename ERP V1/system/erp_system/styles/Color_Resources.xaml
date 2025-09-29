@@ -30,6 +30,8 @@
     <!-- Custom -->
     <SolidColorBrush x:Key="Color1" Color="{StaticResource CreamWhite}"/>
     <SolidColorBrush x:Key="BackgroundColor" Color="{StaticResource FadedBluePurple}"/>
+    <!-- Alias for views expecting BackgroundBrush -->
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource FadedBluePurple}"/>
     <SolidColorBrush x:Key="BorderColor" Color="{StaticResource NeutralGrayMedium}"/>
     <SolidColorBrush x:Key="OpaqueWhite" Color="{StaticResource PrimaryWhite}" Opacity=".4"/>
     <SolidColorBrush x:Key="FadeWhite" Color="{StaticResource PrimaryWhite}" Opacity=".15"/>
@@ -77,4 +79,6 @@
         <GradientStop Color="{StaticResource PrimaryBluePurple}" Offset="0.10" />
         <GradientStop Color="{StaticResource PrimaryYellow}" Offset="0.95" />
     </LinearGradientBrush>
+
+    <!-- Additional commonly used brushes referenced by views -->
 </ResourceDictionary>

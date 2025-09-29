@@ -4,17 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:erp_system.view"
+             xmlns:view_model="clr-namespace:erp_system.view_model"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.DataContext>
+        <view_model:Payroll_View_Model />
+    </UserControl.DataContext>
+    
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Top Cards -->
-                <RowDefinition Height="*"/>
-                <!-- Payroll Records -->
                 <RowDefinition Height="Auto"/>
-                <!-- Deduction Breakdown -->
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- ===== Top Section Cards ===== -->
@@ -24,92 +28,152 @@
                     <Border Background="White" CornerRadius="8" BorderBrush="#EEE" BorderThickness="1" Padding="15" Margin="5">
                         <StackPanel>
                             <TextBlock Text="Total Payroll" FontWeight="Bold" FontSize="14"/>
-                            <TextBlock Text="₱0" FontWeight="SemiBold" FontSize="24" Margin="0,10,0,0"/>
+                            <TextBlock Text="{Binding TotalPayroll, StringFormat=₱{0:N2}}" FontWeight="SemiBold" FontSize="24" Margin="0,10,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Card 2 -->
                     <Border Background="White" CornerRadius="8" BorderBrush="#EEE" BorderThickness="1" Padding="15" Margin="5">
                         <StackPanel>
-                            <TextBlock Text="Total Commissions" FontWeight="Bold" FontSize="14"/>
-                            <TextBlock Text="₱0" FontWeight="SemiBold" FontSize="24" Margin="0,10,0,0"/>
+                            <TextBlock Text="Total Bonuses" FontWeight="Bold" FontSize="14"/>
+                            <TextBlock Text="{Binding TotalCommissions, StringFormat=₱{0:N2}}" FontWeight="SemiBold" FontSize="24" Margin="0,10,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Card 3 -->
                     <Border Background="White" CornerRadius="8" BorderBrush="#EEE" BorderThickness="1" Padding="15" Margin="5">
                         <StackPanel>
-                            <TextBlock Text="Total Deductions" FontWeight="Bold" FontSize="14"/>
-                            <TextBlock Text="₱0" FontWeight="SemiBold" FontSize="24" Margin="0,10,0,0"/>
+                            <TextBlock Text="Records Count" FontWeight="Bold" FontSize="14"/>
+                            <TextBlock Text="{Binding PayrollRecords.Count, StringFormat='{}{0} Records'}" FontWeight="SemiBold" FontSize="24" Margin="0,10,0,0"/>
                         </StackPanel>
                     </Border>
                 </UniformGrid>
 
-                <!-- Process Payroll Button -->
-                <Button Content="Process Payroll" Background="#FFDFAF00" 
-                        Padding="15,10" Margin="20,0,0,0" 
-                        HorizontalAlignment="Right" DockPanel.Dock="Top" 
-                        FontWeight="Bold" BorderThickness="0" 
-                        Cursor="Hand"/>
+                <!-- Action Buttons -->
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Right">
+                    <Button Content="Refresh" Command="{Binding Refresh_Command}" Padding="10,8" Margin="0,0,10,0"
+                            Background="#E5E7EB" BorderThickness="0"/>
+                    <Button Content="Generate Payroll" Command="{Binding GeneratePayroll_Command}" 
+                            Background="#10B981" Foreground="White"
+                            Padding="15,10" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                </StackPanel>
             </DockPanel>
 
+            <!-- ===== Employee Selection and Period ===== -->
+            <Border Grid.Row="1" Background="#F8FAFC" CornerRadius="8" Padding="20" Margin="0,0,0,20" BorderBrush="#E2E8F0" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Employee Selection -->
+                    <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Top">
+                        <TextBlock Text="Select Employee" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Left"/>
+                        <ComboBox ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee}" 
+                                  DisplayMemberPath="FullName" SelectedValuePath="FullName" Width="200" Height="35" HorizontalAlignment="Left"/>
+                    </StackPanel>
+
+                    <!-- Period Start -->
+                    <StackPanel Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Top">
+                        <TextBlock Text="Period Start" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding PayrollPeriodStart}" Width="150" Height="35"/>
+                    </StackPanel>
+
+                    <!-- Period End -->
+                    <StackPanel Grid.Column="2" Margin="0,0,10,0" VerticalAlignment="Top">
+                        <TextBlock Text="Period End" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding PayrollPeriodEnd}" Width="150" Height="35"/>
+                    </StackPanel>
+
+                    <!-- Process Button -->
+                    <StackPanel Grid.Column="3" VerticalAlignment="Top" Margin="0,25,0,0">
+                        <Button Content="Process Selected" Command="{Binding ProcessPayroll_Command}" 
+                                Background="#F59E0B" Foreground="White"
+                                Padding="15,8" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
             <!-- ===== Payroll Records ===== -->
-            <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,20">
+            <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="Payroll Records" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock Text="Loading payroll records..." 
-                               Foreground="Gray" FontSize="14" 
-                               HorizontalAlignment="Center" Margin="0,40,0,20"/>
+                    <TextBlock Text="Payroll Records" FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MaxHeight="400">
+                        <DataGrid ItemsSource="{Binding PayrollRecords}" AutoGenerateColumns="False" CanUserAddRows="False" 
+                                  GridLinesVisibility="Horizontal" RowHeaderWidth="0" SelectionMode="Single"
+                                  AlternatingRowBackground="#F8FAFC" RowHeight="35" FontSize="12">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding PayrollID}" Width="50" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="140" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Position" Binding="{Binding Position}" Width="110" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Period Start" Binding="{Binding PeriodStart, StringFormat='MMM dd, yyyy'}" Width="100" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Period End" Binding="{Binding PeriodEnd, StringFormat='MMM dd, yyyy'}" Width="100" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Basic Salary" Binding="{Binding BasicSalary, StringFormat=₱{0:N0}}" Width="90" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Bonuses" Binding="{Binding Bonuses, StringFormat=₱{0:N0}}" Width="90" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Net Pay" Binding="{Binding NetPay, StringFormat=₱{0:N0}}" Width="90" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="Foreground" Value="#059669"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ScrollViewer>
                 </StackPanel>
             </Border>
 
             <!-- ===== Philippine Deduction Breakdown ===== -->
-            <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="20">
+            <Border Grid.Row="3" Background="White" CornerRadius="8" Padding="20">
                 <StackPanel>
                     <TextBlock Text="Philippine Deduction Breakdown" 
                                FontSize="16" FontWeight="Bold" Margin="0,0,0,20"/>
 
                     <UniformGrid Columns="4" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         <!-- SSS -->
-                        <Border Background="#FFF9F9F9" CornerRadius="8" Padding="15" Margin="10">
+                        <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="10">
                             <StackPanel>
-                                <TextBlock Text="SSS" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="4.5%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                                <TextBlock Text="SSS" FontWeight="Bold" FontSize="14" Foreground="#0369A1"/>
+                                <TextBlock Text="4.5%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" Foreground="#0369A1"/>
                                 <TextBlock Text="Social Security System contribution (max ₱1,125)" 
-                                           TextWrapping="Wrap" Foreground="Gray" FontSize="12" 
+                                           TextWrapping="Wrap" Foreground="#64748B" FontSize="12" 
                                            Margin="0,10,0,0"/>
                             </StackPanel>
                         </Border>
 
                         <!-- PhilHealth -->
-                        <Border Background="#FFF9F9F9" CornerRadius="8" Padding="15" Margin="10">
+                        <Border Background="#F0FDF4" CornerRadius="8" Padding="15" Margin="10">
                             <StackPanel>
-                                <TextBlock Text="PhilHealth" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="2.75%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                                <TextBlock Text="PhilHealth" FontWeight="Bold" FontSize="14" Foreground="#059669"/>
+                                <TextBlock Text="2.75%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" Foreground="#059669"/>
                                 <TextBlock Text="Health insurance contribution (max ₱1,750)" 
-                                           TextWrapping="Wrap" Foreground="Gray" FontSize="12" 
+                                           TextWrapping="Wrap" Foreground="#64748B" FontSize="12" 
                                            Margin="0,10,0,0"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Pag-IBIG -->
-                        <Border Background="#FFF9F9F9" CornerRadius="8" Padding="15" Margin="10">
+                        <Border Background="#F0F9FF" CornerRadius="8" Padding="15" Margin="10">
                             <StackPanel>
-                                <TextBlock Text="Pag-IBIG" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="2%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                                <TextBlock Text="Pag-IBIG" FontWeight="Bold" FontSize="14" Foreground="#0369A1"/>
+                                <TextBlock Text="2%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" Foreground="#0369A1"/>
                                 <TextBlock Text="Housing fund contribution (max ₱100)" 
-                                           TextWrapping="Wrap" Foreground="Gray" FontSize="12" 
+                                           TextWrapping="Wrap" Foreground="#64748B" FontSize="12" 
                                            Margin="0,10,0,0"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Income Tax -->
-                        <Border Background="#FFF9F9F9" CornerRadius="8" Padding="15" Margin="10">
+                        <Border Background="#F3F4F6" CornerRadius="8" Padding="15" Margin="10">
                             <StackPanel>
-                                <TextBlock Text="Income Tax" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="15%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                                <TextBlock Text="Income Tax" FontWeight="Bold" FontSize="14" Foreground="#374151"/>
+                                <TextBlock Text="15%" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,0" Foreground="#374151"/>
                                 <TextBlock Text="Withholding tax on excess over ₱25,000" 
-                                           TextWrapping="Wrap" Foreground="Gray" FontSize="12" 
+                                           TextWrapping="Wrap" Foreground="#64748B" FontSize="12" 
                                            Margin="0,10,0,0"/>
                             </StackPanel>
                         </Border>

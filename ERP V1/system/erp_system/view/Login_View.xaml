@@ -127,7 +127,7 @@
                            Width="85"
                            Height="85"/>
 
-                    <TextBlock Text="Chemistry Laboratory"
+                    <TextBlock Text="Avielle"
                                Foreground="{StaticResource Color1}"
                                FontSize="25"
                                FontFamily="Segoe UI"

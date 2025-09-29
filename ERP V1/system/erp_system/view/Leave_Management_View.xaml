@@ -4,14 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:erp_system.view"
+             xmlns:view_model="clr-namespace:erp_system.view_model"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <UserControl.DataContext>
+        <view_model:Leave_Management_View_Model />
+    </UserControl.DataContext>
 
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
         <!-- Top Summary Cards -->
         <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,15" HorizontalAlignment="Stretch">
@@ -19,7 +25,7 @@
             <Border CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="15" Margin="5" Background="White">
                 <StackPanel>
                     <TextBlock Text="Pending Approvals" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="0" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                    <TextBlock Text="{Binding PendingApprovals}" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
                     <TextBlock Text="⏰" FontSize="18" HorizontalAlignment="Right" Foreground="Orange"/>
                 </StackPanel>
             </Border>
@@ -28,7 +34,7 @@
             <Border CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="15" Margin="5" Background="White">
                 <StackPanel>
                     <TextBlock Text="This Month" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="0" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                    <TextBlock Text="{Binding ThisMonthLeaves}" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
                     <TextBlock Text="📅" FontSize="18" HorizontalAlignment="Right" Foreground="DodgerBlue"/>
                 </StackPanel>
             </Border>
@@ -37,18 +43,228 @@
             <Border CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="15" Margin="5" Background="White">
                 <StackPanel>
                     <TextBlock Text="Available Days" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="15" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                    <TextBlock Text="{Binding AvailableDays}" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
                     <TextBlock Text="✔️" FontSize="18" HorizontalAlignment="Right" Foreground="Green"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
 
+        <!-- New Leave Request Form -->
+        <Border Grid.Row="1" CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="20" Margin="0,0,0,15" Background="White">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Create New Leave Request" FontWeight="Bold" FontSize="16" Margin="0,0,0,15"/>
+                    <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Employee Selection -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,10">
+                        <TextBlock Text="Employee" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee}" Width="150">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={x:Static local:FullNameConverter.Instance}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- Leave Type Selection -->
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,10,10">
+                        <TextBlock Text="Leave Type" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding LeaveTypes}" SelectedItem="{Binding SelectedLeaveType}" DisplayMemberPath="TypeName" Width="150"/>
+                    </StackPanel>
+
+                    <!-- Start Date -->
+                    <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,10,10">
+                        <TextBlock Text="Start Date" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding StartDate}" Width="150"/>
+                    </StackPanel>
+
+                    <!-- End Date -->
+                    <StackPanel Grid.Row="0" Grid.Column="3" Margin="0,0,10,10">
+                        <TextBlock Text="End Date" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DatePicker SelectedDate="{Binding EndDate}" Width="150"/>
+                    </StackPanel>
+
+                    <!-- Create Button -->
+                    <Button Grid.Row="0" Grid.Column="4" Content="Create Request" Command="{Binding CreateLeaveRequest_Command}" 
+                            Padding="15,8" Background="#4CAF50" Foreground="White" BorderThickness="0" 
+                            VerticalAlignment="Bottom" Margin="10,0,0,10"/>
+
+                    <!-- Reason -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,10,10,0">
+                        <TextBlock Text="Reason (Optional)" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding Reason}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
         <!-- Leave Applications -->
-        <Border Grid.Row="1" CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="20" Background="White">
+        <Border Grid.Row="2" CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="20" Background="White">
             <StackPanel>
-                <TextBlock Text="Leave Applications" FontWeight="Bold" FontSize="16"/>
-                <TextBlock Text="No leave applications found" Foreground="Gray" HorizontalAlignment="Center" Margin="0,40,0,0"/>
+                <DockPanel Margin="0,0,0,15">
+                    <TextBlock Text="Leave Applications" FontWeight="Bold" FontSize="16" DockPanel.Dock="Left"/>
+                    
+                    <!-- Search and Filter Controls -->
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <TextBox Text="{Binding SearchText}" Width="200" Margin="0,0,10,0" 
+                                 VerticalContentAlignment="Center" Padding="8,5">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border Background="{TemplateBinding Background}" 
+                                                        BorderBrush="#ddd" BorderThickness="1" CornerRadius="5">
+                                                    <Grid>
+                                                        <ScrollViewer x:Name="PART_ContentHost" Margin="8,5"/>
+                                                        <TextBlock Text="Search employees, types, or status..." 
+                                                                   Foreground="Gray" Margin="8,5" 
+                                                                   IsHitTestVisible="False" 
+                                                                   Visibility="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static local:EmptyToVisibilityConverter.Instance}}"/>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        
+                        <ComboBox SelectedItem="{Binding SelectedStatus}" Width="120" Margin="0,0,10,0">
+                            <ComboBoxItem Content="All Status"/>
+                            <ComboBoxItem Content="Pending"/>
+                            <ComboBoxItem Content="Approved"/>
+                            <ComboBoxItem Content="Rejected"/>
+                        </ComboBox>
+                        
+                        <Button Content="Refresh" Command="{Binding Refresh_Command}" Padding="10,5" 
+                                Background="#E5E7EB" BorderThickness="0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" 
+                                                        CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+
+                <DataGrid ItemsSource="{Binding FilteredLeaveRequests}" AutoGenerateColumns="False" 
+                          CanUserAddRows="False" GridLinesVisibility="None" RowHeaderWidth="0"
+                          CanUserResizeColumns="True" CanUserSortColumns="True"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          MinHeight="300" MaxHeight="500">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="*" MinWidth="120"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding TypeName}" Width="*" MinWidth="100"/>
+                        <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat=yyyy-MM-dd}" Width="*" MinWidth="100"/>
+                        <DataGridTextColumn Header="End Date" Binding="{Binding EndDate, StringFormat=yyyy-MM-dd}" Width="*" MinWidth="100"/>
+                        <DataGridTextColumn Header="Request Date" Binding="{Binding RequestDate, StringFormat=yyyy-MM-dd}" Width="*" MinWidth="100"/>
+                        <DataGridTemplateColumn Header="Status" Width="*" MinWidth="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Background="{Binding Status, Converter={x:Static local:StatusToColorConverter.Instance}}" 
+                                            CornerRadius="10" Padding="8,4" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Status}" 
+                                                   Foreground="White" 
+                                                   FontWeight="SemiBold" 
+                                                   HorizontalAlignment="Center"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Approved By" Binding="{Binding ApprovedBy}" Width="*" MinWidth="100"/>
+                        <DataGridTemplateColumn Header="Actions" Width="200" MinWidth="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="Approve" Command="{Binding DataContext.ApproveLeaveRequest_Command, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}" Padding="8,4" Margin="2" Background="#4CAF50" 
+                                                Foreground="White" BorderThickness="0" FontSize="11"
+                                                Visibility="{Binding Status, Converter={x:Static local:StatusToVisibilityConverter.Instance}, ConverterParameter=Pending}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}" 
+                                                                        CornerRadius="3" Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button Content="Reject" Command="{Binding DataContext.RejectLeaveRequest_Command, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}" Padding="8,4" Margin="2" Background="#F44336" 
+                                                Foreground="White" BorderThickness="0" FontSize="11"
+                                                Visibility="{Binding Status, Converter={x:Static local:StatusToVisibilityConverter.Instance}, ConverterParameter=Pending}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}" 
+                                                                        CornerRadius="3" Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button Content="Delete" Command="{Binding DataContext.DeleteLeaveRequest_Command, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}" Padding="8,4" Margin="2" Background="#FF9800" 
+                                                Foreground="White" BorderThickness="0" FontSize="11">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}" 
+                                                                        CornerRadius="3" Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
         </Border>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
