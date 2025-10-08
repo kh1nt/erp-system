@@ -14,9 +14,9 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"INSERT INTO Leave_Requests (StartDate, EndDate, RequestDate, Status, ApprovedBy, EmployeeID, LeaveID)
+            command.CommandText = @"INSERT INTO Leave_Requests (StartDate, EndDate, RequestDate, Status, ApprovedBy, EmployeeID, LeaveID, Reason)
                                     OUTPUT INSERTED.LeaveRequestID
-                                    VALUES (@StartDate, @EndDate, @RequestDate, @Status, @ApprovedBy, @EmployeeID, @LeaveID)";
+                                    VALUES (@StartDate, @EndDate, @RequestDate, @Status, @ApprovedBy, @EmployeeID, @LeaveID, @Reason)";
             command.Parameters.Add("@StartDate", SqlDbType.DateTime2).Value = entity.StartDate;
             command.Parameters.Add("@EndDate", SqlDbType.DateTime2).Value = entity.EndDate;
             command.Parameters.Add("@RequestDate", SqlDbType.DateTime2).Value = entity.RequestDate;
@@ -24,6 +24,7 @@ namespace erp_system.repositories
             command.Parameters.Add("@ApprovedBy", SqlDbType.NVarChar).Value = entity.ApprovedBy ?? string.Empty;
             command.Parameters.Add("@EmployeeID", SqlDbType.Int).Value = entity.EmployeeID;
             command.Parameters.Add("@LeaveID", SqlDbType.Int).Value = entity.LeaveID;
+            command.Parameters.Add("@Reason", SqlDbType.NVarChar).Value = entity.Reason ?? string.Empty;
             return (int)command.ExecuteScalar();
         }
 
@@ -35,7 +36,7 @@ namespace erp_system.repositories
 
             command.Connection = connection;
             command.CommandText = @"UPDATE Leave_Requests SET StartDate=@StartDate, EndDate=@EndDate, RequestDate=@RequestDate,
-                                     Status=@Status, ApprovedBy=@ApprovedBy, EmployeeID=@EmployeeID, LeaveID=@LeaveID
+                                     Status=@Status, ApprovedBy=@ApprovedBy, EmployeeID=@EmployeeID, LeaveID=@LeaveID, Reason=@Reason
                                      WHERE LeaveRequestID=@LeaveRequestID";
             command.Parameters.Add("@LeaveRequestID", SqlDbType.Int).Value = entity.RequestID;
             command.Parameters.Add("@StartDate", SqlDbType.DateTime2).Value = entity.StartDate;
@@ -45,6 +46,7 @@ namespace erp_system.repositories
             command.Parameters.Add("@ApprovedBy", SqlDbType.NVarChar).Value = entity.ApprovedBy ?? string.Empty;
             command.Parameters.Add("@EmployeeID", SqlDbType.Int).Value = entity.EmployeeID;
             command.Parameters.Add("@LeaveID", SqlDbType.Int).Value = entity.LeaveID;
+            command.Parameters.Add("@Reason", SqlDbType.NVarChar).Value = entity.Reason ?? string.Empty;
             command.ExecuteNonQuery();
         }
 
@@ -67,7 +69,7 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"SELECT LeaveRequestID, StartDate, EndDate, RequestDate, Status, ApprovedBy, EmployeeID, LeaveID
+            command.CommandText = @"SELECT LeaveRequestID, StartDate, EndDate, RequestDate, Status, ApprovedBy, EmployeeID, LeaveID, Reason
                                      FROM Leave_Requests WHERE LeaveRequestID=@id";
             command.Parameters.Add("@id", SqlDbType.Int).Value = id;
             using var rdr = command.ExecuteReader();
@@ -82,7 +84,8 @@ namespace erp_system.repositories
                     Status = rdr[4]?.ToString() ?? string.Empty,
                     ApprovedBy = rdr[5]?.ToString() ?? string.Empty,
                     EmployeeID = rdr.GetInt32(6),
-                    LeaveID = rdr.GetInt32(7)
+                    LeaveID = rdr.GetInt32(7),
+                    Reason = rdr[8]?.ToString() ?? string.Empty
                 };
             }
             return null;
@@ -96,7 +99,7 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"SELECT LeaveRequestID, StartDate, EndDate, RequestDate, Status, ApprovedBy, EmployeeID, LeaveID FROM Leave_Requests";
+            command.CommandText = @"SELECT LeaveRequestID, StartDate, EndDate, RequestDate, Status, ApprovedBy, EmployeeID, LeaveID, Reason FROM Leave_Requests";
             using var rdr = command.ExecuteReader();
             while (rdr.Read())
             {
@@ -109,7 +112,8 @@ namespace erp_system.repositories
                     Status = rdr[4]?.ToString() ?? string.Empty,
                     ApprovedBy = rdr[5]?.ToString() ?? string.Empty,
                     EmployeeID = rdr.GetInt32(6),
-                    LeaveID = rdr.GetInt32(7)
+                    LeaveID = rdr.GetInt32(7),
+                    Reason = rdr[8]?.ToString() ?? string.Empty
                 });
             }
             return list;

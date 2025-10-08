@@ -12,10 +12,8 @@ namespace erp_system.model
         public string EmployeeName { get; set; } = string.Empty;
         public string Position { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
+        public int DepartmentID { get; set; }
         public string ReviewType { get; set; } = "Annual"; // Annual, Quarterly, Monthly
-        public decimal SalesTarget { get; set; }
-        public decimal SalesAchieved { get; set; }
-        public decimal SalesAchievementPercentage => SalesTarget > 0 ? (SalesAchieved / SalesTarget) * 100 : 0;
         public string ReviewerName { get; set; } = string.Empty;
         public string Goals { get; set; } = string.Empty;
         public string Strengths { get; set; } = string.Empty;
@@ -26,7 +24,6 @@ namespace erp_system.model
     {
         public decimal AverageScore { get; set; }
         public int TotalEvaluations { get; set; }
-        public decimal SalesAchievementRate { get; set; }
         public int HighPerformers { get; set; } // Score >= 4.0
         public int AveragePerformers { get; set; } // Score 2.5-3.9
         public int LowPerformers { get; set; } // Score < 2.5
@@ -40,6 +37,5 @@ namespace erp_system.model
         public string Period { get; set; } = string.Empty;
         public decimal AverageScore { get; set; }
         public int EvaluationCount { get; set; }
-        public decimal SalesAchievement { get; set; }
     }
 }

@@ -4,8 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:erp_system.view"
+             xmlns:model="clr-namespace:erp_system.model"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:ReportTypeToDescriptionConverter x:Key="ReportTypeToDescriptionConverter"/>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:ReportTypeToDisplayNameConverter x:Key="ReportTypeToDisplayNameConverter"/>
+    </UserControl.Resources>
     <Grid Background="#fdfcf9" Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
@@ -18,68 +24,423 @@
                 <TextBlock Text="Report Types" FontWeight="Bold" FontSize="16" Margin="0,0,0,15"/>
 
                 <!-- Employee Directory -->
-                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Button Command="{Binding SelectReportTypeCommand}" CommandParameter="{x:Static model:ReportType.EmployeeDirectory}" 
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,5">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" 
+                                                Padding="10,8"
+                                                BorderThickness="1"
+                                                BorderBrush="#e0e0e0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedReportType}" Value="{x:Static model:ReportType.EmployeeDirectory}">
+                                                            <Setter Property="Background" Value="#e3f2fd"/>
+                                                            <Setter Property="BorderBrush" Value="#2196f3"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="👤" FontSize="20" Foreground="DodgerBlue" Margin="0,0,10,0"/>
                     <StackPanel>
                         <TextBlock Text="Employee Directory" FontWeight="Bold"/>
-                        <TextBlock Text="Complete list of all employees with details" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="Personal details, department info, salary &amp; performance data" Foreground="Gray" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
+                </Button>
 
                 <!-- Sales Summary -->
-                <StackPanel Orientation="Horizontal" Margin="0,10">
+                <Button Command="{Binding SelectReportTypeCommand}" CommandParameter="{x:Static model:ReportType.SalesSummary}" 
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,10">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" 
+                                                Padding="10,8"
+                                                BorderThickness="1"
+                                                BorderBrush="#e0e0e0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedReportType}" Value="{x:Static model:ReportType.SalesSummary}">
+                                                            <Setter Property="Background" Value="#e8f5e8"/>
+                                                            <Setter Property="BorderBrush" Value="#4caf50"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="🛒" FontSize="20" Foreground="Green" Margin="0,0,10,0"/>
                     <StackPanel>
                         <TextBlock Text="Sales Summary" FontWeight="Bold"/>
-                        <TextBlock Text="Sales performance and revenue analysis" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="Revenue, transactions, product performance &amp; trends" Foreground="Gray" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
+                </Button>
 
                 <!-- Payroll Report -->
-                <StackPanel Orientation="Horizontal" Margin="0,10">
+                <Button Command="{Binding SelectReportTypeCommand}" CommandParameter="{x:Static model:ReportType.PayrollReport}" 
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,10">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" 
+                                                Padding="10,8"
+                                                BorderThickness="1"
+                                                BorderBrush="#e0e0e0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedReportType}" Value="{x:Static model:ReportType.PayrollReport}">
+                                                            <Setter Property="Background" Value="#f3e5f5"/>
+                                                            <Setter Property="BorderBrush" Value="#9c27b0"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="💲" FontSize="20" Foreground="MediumPurple" Margin="0,0,10,0"/>
                     <StackPanel>
                         <TextBlock Text="Payroll Report" FontWeight="Bold"/>
-                        <TextBlock Text="Salary, commission and deduction details" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="Salaries, commissions, deductions &amp; net pay calculations" Foreground="Gray" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
+                </Button>
 
                 <!-- Performance Analysis -->
-                <StackPanel Orientation="Horizontal" Margin="0,10">
+                <Button Command="{Binding SelectReportTypeCommand}" CommandParameter="{x:Static model:ReportType.PerformanceAnalysis}" 
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,10">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" 
+                                                Padding="10,8"
+                                                BorderThickness="1"
+                                                BorderBrush="#e0e0e0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedReportType}" Value="{x:Static model:ReportType.PerformanceAnalysis}">
+                                                            <Setter Property="Background" Value="#fff3e0"/>
+                                                            <Setter Property="BorderBrush" Value="#ff9800"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="🏆" FontSize="20" Foreground="Orange" Margin="0,0,10,0"/>
                     <StackPanel>
                         <TextBlock Text="Performance Analysis" FontWeight="Bold"/>
-                        <TextBlock Text="Employee performance metrics and KPIs" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="Ratings, goals, achievements &amp; performance trends" Foreground="Gray" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
+                </Button>
 
                 <!-- Attendance Report -->
-                <StackPanel Orientation="Horizontal" Margin="0,10">
+                <Button Command="{Binding SelectReportTypeCommand}" CommandParameter="{x:Static model:ReportType.AttendanceReport}" 
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,10">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" 
+                                                Padding="10,8"
+                                                BorderThickness="1"
+                                                BorderBrush="#e0e0e0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedReportType}" Value="{x:Static model:ReportType.AttendanceReport}">
+                                                            <Setter Property="Background" Value="#ffebee"/>
+                                                            <Setter Property="BorderBrush" Value="#f44336"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="📅" FontSize="20" Foreground="Crimson" Margin="0,0,10,0"/>
-                    <StackPanel>
-                        <TextBlock Text="Attendance Report" FontWeight="Bold"/>
-                        <TextBlock Text="Employee attendance and leave summary" Foreground="Gray" FontSize="12"/>
-                    </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Leave Report" FontWeight="Bold"/>
+                            <TextBlock Text="Leave requests, approvals, balances &amp; leave patterns" Foreground="Gray" FontSize="12"/>
+                        </StackPanel>
                 </StackPanel>
+                </Button>
 
                 <!-- Commission Report -->
-                <StackPanel Orientation="Horizontal" Margin="0,10">
+                <Button Command="{Binding SelectReportTypeCommand}" CommandParameter="{x:Static model:ReportType.CommissionReport}" 
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,10">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" 
+                                                Padding="10,8"
+                                                BorderThickness="1"
+                                                BorderBrush="#e0e0e0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedReportType}" Value="{x:Static model:ReportType.CommissionReport}">
+                                                            <Setter Property="Background" Value="#f3e5f5"/>
+                                                            <Setter Property="BorderBrush" Value="#673ab7"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="📈" FontSize="20" Foreground="BlueViolet" Margin="0,0,10,0"/>
                     <StackPanel>
                         <TextBlock Text="Commission Report" FontWeight="Bold"/>
-                        <TextBlock Text="Sales consultant commission breakdown" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="Sales performance, commission calculations &amp; payment status" Foreground="Gray" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
 
-        <!-- Report Preview Panel -->
+        <!-- Report Generation Panel -->
         <Border Grid.Column="1" CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Background="White" Padding="20">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="📄" FontSize="40" Foreground="Gray" HorizontalAlignment="Center"/>
-                <TextBlock Text="Select a Report Type" FontWeight="Bold" FontSize="16" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                <TextBlock Text="Choose a report from the sidebar to view its contents" Foreground="Gray" FontSize="13" HorizontalAlignment="Center"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Selected Report Type Display -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                    <TextBlock Text="Report Configuration" FontWeight="Bold" FontSize="18" Margin="0,0,0,15"/>
+                    
+                    <Border Background="#f8f9fa" CornerRadius="5" Padding="15" BorderBrush="#e0e0e0" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Selected Report:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding SelectedReportType, Converter={StaticResource ReportTypeToDisplayNameConverter}}" 
+                                       FontSize="16" FontWeight="Bold" Foreground="#2196f3"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Date Range Selection -->
+                <StackPanel Grid.Row="1" Margin="0,0,0,20">
+                    <TextBlock Text="Date Range:" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Start Date:" FontSize="12" Margin="0,0,0,5"/>
+                            <DatePicker SelectedDate="{Binding StartDate}" Margin="0,0,0,0"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="End Date:" FontSize="12" Margin="0,0,0,5"/>
+                            <DatePicker SelectedDate="{Binding EndDate}" Margin="0,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Content="📄 Generate PDF Report" 
+                                Command="{Binding GenerateReportCommand}"
+                                IsEnabled="{Binding CanGenerateReport}"
+                                Background="#4CAF50" 
+                                Foreground="White" 
+                                Padding="15,8" 
+                                Margin="0,0,10,0"
+                                BorderThickness="0"
+                                FontWeight="SemiBold">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" 
+                                                        CornerRadius="5" 
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        
+                        <Button Content="👁 Generate Preview" 
+                                Command="{Binding PreviewReportCommand}"
+                                IsEnabled="{Binding CanGenerateReport}"
+                                Background="#2196F3" 
+                                Foreground="White" 
+                                Padding="15,8" 
+                                Margin="0,0,0,0"
+                                BorderThickness="0"
+                                FontWeight="SemiBold">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" 
+                                                        CornerRadius="5" 
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Preview Section -->
+                    <Border Background="#e8f5e8" CornerRadius="5" Padding="15" BorderBrush="#4caf50" BorderThickness="1"
+                            Visibility="{Binding HasPreview, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBlock Text="✅" FontSize="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="Preview Available" FontWeight="Bold" FontSize="14"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding PreviewFilePath}" FontSize="12" Foreground="#666" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <Button Content="🔍 Open Preview" 
+                                    Command="{Binding OpenPreviewCommand}"
+                                    Background="#4caf50" 
+                                    Foreground="White" 
+                                    Padding="10,6" 
+                                    BorderThickness="0"
+                                    FontWeight="SemiBold"
+                                    HorizontalAlignment="Left">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" 
+                                                            CornerRadius="3" 
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center" 
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Report Description -->
+                <Border Grid.Row="3" Background="#f8f9fa" CornerRadius="5" Padding="15" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Report Information" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="{Binding SelectedReportType, Converter={StaticResource ReportTypeToDescriptionConverter}}" 
+                                   TextWrapping="Wrap" 
+                                   Foreground="#666"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Loading Indicator -->
+                <StackPanel Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                            Visibility="{Binding IsGeneratingReport, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="⏳" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Generating PDF Report..." FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Please wait while we prepare your report..." 
+                               Foreground="Gray" 
+                               FontSize="12" 
+                               HorizontalAlignment="Center" 
+                               Margin="0,5,0,0"/>
             </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

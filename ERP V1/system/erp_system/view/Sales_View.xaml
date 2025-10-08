@@ -6,21 +6,72 @@
              xmlns:local="clr-namespace:erp_system.view"
              xmlns:view_model="clr-namespace:erp_system.view_model"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1200">
+             d:DesignHeight="450" d:DesignWidth="800">
+
     <UserControl.DataContext>
         <view_model:Sales_View_Model />
     </UserControl.DataContext>
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-    <Grid Margin="10">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" MinHeight="140"/>
-            <RowDefinition Height="Auto" MinHeight="250"/>
-            <RowDefinition Height="Auto" MinHeight="200"/>
-            <RowDefinition Height="*" MinHeight="200"/>
+                <RowDefinition Height="Auto"/>
+                <!-- Search + Button -->
+                <RowDefinition Height="*"/>
+                <!-- Sales List -->
         </Grid.RowDefinitions>
 
-        <!-- Top Summary Cards -->
-        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <!-- ===== TOP BAR ===== -->
+            <DockPanel Grid.Row="0" Margin="0,0,0,20">
+                <!-- Left: Search Filters -->
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <!-- Search Box -->
+                    <Border Background="White" CornerRadius="6" BorderBrush="#DDD" BorderThickness="1" Padding="10" Width="250" Margin="0,0,15,0">
+                        <DockPanel>
+                            <TextBlock Text="🔍" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"/>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Date Range Filter -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,15,0" VerticalAlignment="Center">
+                        <DatePicker SelectedDate="{Binding FilterStartDate}" Width="110" Height="40" Padding="5" Background="White" BorderBrush="#DDD" BorderThickness="1" Margin="0,0,5,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
+                        <DatePicker SelectedDate="{Binding FilterEndDate}" Width="110" Height="40" Padding="5" Background="White" BorderBrush="#DDD" BorderThickness="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Quick Filters -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Today" Command="{Binding FilterToday_Command}" 
+                                Width="80" Height="40" Margin="0,0,5,0"
+                                Background="#E3F2FD" BorderThickness="1" BorderBrush="#2196F3" FontSize="12"/>
+                        <Button Content="Week" Command="{Binding FilterThisWeek_Command}" 
+                                Width="80" Height="40" Margin="0,0,5,0"
+                                Background="#E3F2FD" BorderThickness="1" BorderBrush="#2196F3" FontSize="12"/>
+                        <Button Content="Month" Command="{Binding FilterThisMonth_Command}" 
+                                Width="80" Height="40" Margin="0,0,5,0"
+                                Background="#E3F2FD" BorderThickness="1" BorderBrush="#2196F3" FontSize="12"/>
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- ===== SALES LIST ===== -->
+            <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="20" BorderBrush="#EEE" BorderThickness="1">
+                <StackPanel>
+                    <!-- Sales Management Summary Cards -->
+                    <StackPanel Margin="0,0,0,20">
+                        <DockPanel Margin="0,0,0,15" HorizontalAlignment="Stretch">
+                            <TextBlock Text="Sales Management" FontWeight="Bold" FontSize="18" Foreground="#1E293B" DockPanel.Dock="Left"/>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="🔄 Refresh" Width="100" Height="40" Margin="0,0,10,0"
+                                        Background="#E5E7EB" Foreground="#111827" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                                        Command="{Binding ClearFilters_Command}"/>
+                                <Button Content=" + Add Sale " Width="140" Height="40"
+                                        Background="#FACC15" Foreground="Black" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                                        Command="{Binding AddSale_Command}"/>
+                            </StackPanel>
+                        </DockPanel>
+                        
+                        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -28,8 +79,8 @@
             </Grid.ColumnDefinitions>
             
             <!-- Total Sales -->
-            <Border Grid.Column="0" CornerRadius="10" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" Margin="0,0,8,0" 
-                    Background="White" MinHeight="100">
+                            <Border Grid.Column="0" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" Margin="0,0,8,0" 
+                                    Background="#F8FAFC" MinHeight="100">
                 <StackPanel VerticalAlignment="Center">
                     <DockPanel Margin="0,0,0,6">
                         <TextBlock Text="Total Sales" FontWeight="Bold" FontSize="14" DockPanel.Dock="Left"/>
@@ -47,8 +98,8 @@
             </Border>
 
             <!-- This Month -->
-            <Border Grid.Column="1" CornerRadius="10" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" Margin="4,0" 
-                    Background="White" MinHeight="100">
+                            <Border Grid.Column="1" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" Margin="4,0" 
+                                    Background="#F8FAFC" MinHeight="100">
                 <StackPanel VerticalAlignment="Center">
                     <DockPanel Margin="0,0,0,6">
                         <TextBlock Text="This Month" FontWeight="Bold" FontSize="14" DockPanel.Dock="Left"/>
@@ -66,8 +117,8 @@
             </Border>
 
             <!-- Top Performer -->
-            <Border Grid.Column="2" CornerRadius="10" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" Margin="8,0,0,0" 
-                    Background="White" MinHeight="100">
+                            <Border Grid.Column="2" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15" Margin="8,0,0,0" 
+                                    Background="#F8FAFC" MinHeight="100">
                 <StackPanel VerticalAlignment="Center">
                     <DockPanel Margin="0,0,0,6">
                         <TextBlock Text="Top Performer" FontWeight="Bold" FontSize="14" DockPanel.Dock="Left"/>
@@ -78,222 +129,151 @@
                 </StackPanel>
             </Border>
         </Grid>
-
-        <!-- Sales Analytics & Performance -->
-        <Border Grid.Row="1" CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="20" Background="White" Margin="0,0,0,15">
-            <StackPanel>
-                <TextBlock Text="Sales Analytics &amp; Performance" FontWeight="Bold" FontSize="18" Margin="0,0,0,20"/>
-                
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!-- Top Employees by Sales -->
-                    <Border Grid.Column="0" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="12" Margin="0,0,8,0" 
-                            MinHeight="200" Background="White">
-                        <StackPanel>
-                            <TextBlock Text="🏆 Top Performers" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="140">
-                                <ItemsControl ItemsSource="{Binding TopPerformers}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Background="#F8F9FA" CornerRadius="4" Padding="8" Margin="0,0,0,4">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="{Binding Rank}" FontWeight="Bold" FontSize="11" 
-                                                              Width="18" VerticalAlignment="Center" Foreground="#666"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding EmployeeName}" VerticalAlignment="Center" 
-                                                              Margin="6,0" FontSize="11" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Grid.Column="2" Text="{Binding TotalSales, StringFormat=₱{0:N0}}" 
-                                                              FontWeight="SemiBold" VerticalAlignment="Center" FontSize="11" Foreground="#2E7D32"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Sales Department Performance -->
-                    <Border Grid.Column="1" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="12" Margin="4,0" 
-                            MinHeight="200" Background="White">
-                        <StackPanel>
-                            <TextBlock Text="🏢 Sales Department" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                            <StackPanel>
-                                <Border Background="#E3F2FD" CornerRadius="5" Padding="10" Margin="0,0,0,6">
-                                    <StackPanel>
-                                        <TextBlock Text="Total Sales" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3"/>
-                                        <TextBlock Text="{Binding SalesSummary[TotalSales], StringFormat=₱{0:N2}}" 
-                                                   FontSize="14" FontWeight="Bold" Foreground="#1976D2"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Background="#F8F9FA" CornerRadius="5" Padding="10" Margin="0,0,0,6">
-                                    <StackPanel>
-                                        <TextBlock Text="This Month" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3"/>
-                                        <TextBlock Text="{Binding SalesSummary[ThisMonthSales], StringFormat=₱{0:N2}}" 
-                                                   FontSize="12" FontWeight="Bold" Foreground="#2E7D32"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Background="#FFF3E0" CornerRadius="5" Padding="10">
-                                    <StackPanel>
-                                        <TextBlock Text="Transactions" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3"/>
-                                        <TextBlock Text="{Binding SalesSummary[TotalTransactions]}" 
-                                                   FontSize="12" FontWeight="Bold" Foreground="#F57C00"/>
-                                    </StackPanel>
-                                </Border>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Monthly Trends -->
-                    <Border Grid.Column="2" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="12" Margin="8,0,0,0" 
-                            MinHeight="200" Background="White">
-                        <StackPanel>
-                            <TextBlock Text="📊 Month" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="140">
-                                <ItemsControl ItemsSource="{Binding MonthlyTrends}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Background="#F8F9FA" CornerRadius="4" Padding="8" Margin="0,0,0,4">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="{Binding Month}" VerticalAlignment="Center" 
-                                                              FontSize="11" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat=₱{0:N0}}" 
-                                                              FontWeight="SemiBold" VerticalAlignment="Center" FontSize="11" Foreground="#F57C00"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </StackPanel>
-        </Border>
-
-        <!-- Sales Management Section -->
-        <Border Grid.Row="2" CornerRadius="10" BorderBrush="#eee" BorderThickness="1" Padding="20" Background="White" Margin="0,0,0,15">
-            <StackPanel>
-                <!-- Header with Actions -->
-                <Grid Margin="0,0,0,15">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Sales Management" FontWeight="Bold" FontSize="18" Grid.Column="0" VerticalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
-                        <Button Content="➕ Add Sale" Command="{Binding AddSale_Command}" 
-                                Padding="12,6" Background="#4CAF50" Foreground="White" BorderThickness="0" Margin="0,0,8,0"/>
-                        <Button Content="🔄 Refresh" Command="{Binding Refresh_Command}" 
-                                Padding="12,6" Background="#E5E7EB" BorderThickness="0" Margin="0,0,8,0"/>
-                        <Button Content="📊 Analytics" Command="{Binding ShowAnalytics_Command}" 
-                                Padding="12,6" Background="#2196F3" Foreground="White" BorderThickness="0"/>
                     </StackPanel>
-                </Grid>
 
-                <!-- Filter Controls -->
-                <Border Background="#F8F9FA" CornerRadius="8" Padding="15" Margin="0,0,0,15">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        
-                        <!-- First Row: Date Range, Search Employee -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,12">
-                            <!-- Date Range Filter -->
-                            <StackPanel Margin="0,0,20,0">
-                                <TextBlock Text="Date Range" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <DatePicker SelectedDate="{Binding FilterStartDate}" Width="100" Margin="0,0,6,0"/>
-                                    <DatePicker SelectedDate="{Binding FilterEndDate}" Width="100"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- Search Employee -->
-                            <StackPanel>
-                                <TextBlock Text="Search Employee" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox Text="{Binding SearchText}" Width="200" Margin="0,0,6,0" 
-                                             VerticalContentAlignment="Center" Padding="6,4"/>
-                                    <Button Content="🔍" Command="{Binding Search_Command}" 
-                                            Padding="6,4" Background="#FF9800" Foreground="White" BorderThickness="0"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!-- Second Row: Quick Filters -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="1">
-                            <TextBlock Text="Quick Filters:" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <Button Content="Today" Command="{Binding FilterToday_Command}" 
-                                    Padding="8,4" Background="#E3F2FD" BorderThickness="1" BorderBrush="#2196F3" Margin="0,0,6,0"/>
-                            <Button Content="This Week" Command="{Binding FilterThisWeek_Command}" 
-                                    Padding="8,4" Background="#E3F2FD" BorderThickness="1" BorderBrush="#2196F3" Margin="0,0,6,0"/>
-                            <Button Content="This Month" Command="{Binding FilterThisMonth_Command}" 
-                                    Padding="8,4" Background="#E3F2FD" BorderThickness="1" BorderBrush="#2196F3" Margin="0,0,6,0"/>
-                            <Button Content="Clear" Command="{Binding ClearFilters_Command}" 
-                                    Padding="8,4" Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <!-- Sales Data Grid -->
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MaxHeight="450">
-                    <DataGrid ItemsSource="{Binding FilteredSales}" AutoGenerateColumns="False" CanUserAddRows="False" 
-                              GridLinesVisibility="Horizontal" RowHeaderWidth="0" CanUserSortColumns="True"
-                              AlternatingRowBackground="#F8F9FA" RowHeight="40" MinWidth="800">
+                    <TextBlock Text="{Binding FilteredSales.Count, StringFormat=All Sales ({0})}" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                    <DataGrid ItemsSource="{Binding PagedSales}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False"
+                              GridLinesVisibility="None" RowHeaderWidth="0" AlternatingRowBackground="#F8FAFC" 
+                              RowHeight="48" FontSize="13" Background="#FFFFFF" BorderThickness="0"
+                              CanUserResizeColumns="True" CanUserSortColumns="True"
+                              VirtualizingPanel.IsVirtualizing="False" VirtualizingPanel.VirtualizationMode="Standard">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#F1F5F9"/>
+                                <Setter Property="Foreground" Value="#475569"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="16,12"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Margin" Value="0,0"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#E0F2FE"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="16,12"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Setter Property="Foreground" Value="#1E293B"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="#0F172A"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.CellStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat=yyyy-MM-dd}" Width="100" CanUserSort="True"/>
-                            <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=₱{0:N2}}" Width="120" CanUserSort="True"/>
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="350"/>
-                            <DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="150"/>
-                            <DataGridTemplateColumn Header="Actions" Width="80">
+                            <!-- Date Column - Left Aligned -->
+                            <DataGridTextColumn Header="Date" Binding="{Binding SaleDate, StringFormat=yyyy-MM-dd}" Width="110" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Medium"/>
+                                        <Setter Property="Foreground" Value="#64748B"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            
+                            <!-- Amount Column - Left Aligned -->
+                            <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=₱{0:N2}}" Width="130" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#059669"/>
+                                        <Setter Property="FontSize" Value="13"/>
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            
+                            <!-- Description Column - Left Aligned with Wrapping -->
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Medium"/>
+                                        <Setter Property="Foreground" Value="#1E293B"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            
+                            <!-- Employee Column - Center Aligned -->
+                            <DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="150" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Medium"/>
+                                        <Setter Property="Foreground" Value="#1E293B"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            
+                            <!-- Actions Column - Center Aligned -->
+                            <DataGridTemplateColumn Header="Actions" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <Button Content="✏️" Command="{Binding DataContext.EditSale_Command, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                    CommandParameter="{Binding}" Padding="6" Background="Transparent" BorderThickness="0" Margin="0,0,6,0"/>
+                                                    CommandParameter="{Binding}" Padding="8" Background="#FFF59D" BorderThickness="0" Margin="0,0,12,0"
+                                                    ToolTip="Edit Sale" Width="40" Height="34" FontSize="16"/>
                                             <Button Content="🗑️" Command="{Binding DataContext.DeleteSale_Command, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                    CommandParameter="{Binding}" Padding="6" Background="Transparent" BorderThickness="0"/>
+                                                    CommandParameter="{Binding}" Padding="8" Background="#FFCDD2" BorderThickness="0"
+                                                    ToolTip="Delete Sale" Width="40" Height="34" FontSize="16"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                </ScrollViewer>
 
-                <!-- Summary Footer -->
-                <Border Background="#E8F5E8" CornerRadius="5" Padding="10" Margin="0,10,0,0">
+                    <!-- Pagination Controls -->
+                    <Border Background="#F8FAFC" CornerRadius="6" Padding="15" Margin="0,20,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding FilteredSalesCount, StringFormat=Total Records: {0}}" FontWeight="SemiBold"/>
-                        <TextBlock Grid.Column="1" Text="{Binding FilteredTotalAmount, StringFormat=Total Amount: ₱{0:N2}}" FontWeight="SemiBold"/>
-                        <TextBlock Grid.Column="2" Text="{Binding FilteredAverageAmount, StringFormat=Average: ₱{0:N2}}" FontWeight="SemiBold"/>
-                        <TextBlock Grid.Column="3" Text="{Binding FilteredDateRange}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="0" Text="{Binding PageInfo}" FontSize="14" FontWeight="Medium" Foreground="#64748B" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="⏮" Command="{Binding FirstPage_Command}" Width="32" Height="32" Margin="2" Background="#E5E7EB" BorderThickness="0"/>
+                                <Button Content="◀" Command="{Binding PreviousPage_Command}" Width="32" Height="32" Margin="2" Background="#E5E7EB" BorderThickness="0"/>
+                                <Border Background="#3B82F6" CornerRadius="4" Padding="12,8" Margin="5,0">
+                                    <TextBlock Text="{Binding CurrentPage}" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Button Content="▶" Command="{Binding NextPage_Command}" Width="32" Height="32" Margin="2" Background="#E5E7EB" BorderThickness="0"/>
+                                <Button Content="⏭" Command="{Binding LastPage_Command}" Width="32" Height="32" Margin="2" Background="#E5E7EB" BorderThickness="0"/>
+                            </StackPanel>
                     </Grid>
                 </Border>
             </StackPanel>
         </Border>
-
     </Grid>
     </ScrollViewer>
 </UserControl>

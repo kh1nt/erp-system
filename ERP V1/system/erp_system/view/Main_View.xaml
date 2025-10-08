@@ -7,7 +7,7 @@
         xmlns:VModel="clr-namespace:erp_system.view_model"
         xmlns:icon="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1200"
+        Title="MainWindow" Height="900" Width="1400"
         Background="Transparent"
         ResizeMode="CanResizeWithGrip"
         AllowsTransparency="True"
@@ -19,6 +19,8 @@
     </Window.DataContext>
 
     <Window.Resources>
+        <local:StringToBoolConverter x:Key="StringToBoolConverter"/>
+        <local:AdminRoleToVisibilityConverter x:Key="AdminRoleToVisibilityConverter"/>
         <DataTemplate DataType="{x:Type VModel:Dashboard_View_Model}">
             <local:Dashboard_View/>
         </DataTemplate>
@@ -70,23 +72,30 @@
 
                     <!-- Logo -->
                     <StackPanel Orientation="Horizontal"
-                                Height="50"
-                                Margin="20,25,0,40"
+                                Height="75"
+                                Margin="20,25,20,35"
                                 Background="Transparent"
-                                HorizontalAlignment="Left">
-                        <Image Source="/assets/avielle_logo.png" />
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <Image Source="/assets/avielle_logo.png" 
+                               Width="45"
+                               Height="45"
+                               Stretch="Uniform"
+                               VerticalAlignment="Center"/>
                         <TextBlock Text="AVIELLE"
                                    FontFamily="Georgia"
                                    FontSize="30"
-                                   VerticalAlignment="Bottom"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource BgLight}"/>
+                                   FontWeight="Bold"
+                                   Foreground="Black"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,0,0"/>
 
                     </StackPanel>
                     <!-- Navigation Buttons -->
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
-                                 IsChecked="True"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Dashboard, Mode=OneWay}"
                                  Command="{Binding Show_Dashboard_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -97,6 +106,8 @@
 
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Employees, Mode=OneWay}"
                                  Command="{Binding Show_Employees_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -107,6 +118,8 @@
 
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Sales, Mode=OneWay}"
                                  Command="{Binding Show_Sales_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -117,6 +130,8 @@
 
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Performance, Mode=OneWay}"
                                  Command="{Binding Show_Performance_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -127,6 +142,8 @@
 
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Payroll, Mode=OneWay}"
                                  Command="{Binding Show_Payroll_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -137,6 +154,8 @@
 
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=LeaveManagement, Mode=OneWay}"
                                  Command="{Binding Show_Leave_Management_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -147,6 +166,8 @@
 
                     <RadioButton Style="{StaticResource Nav_Button}"
                                  Tag="{StaticResource ResourceKey=Color1}"
+                                 GroupName="NavigationGroup"
+                                 IsChecked="{Binding CurrentView, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Insights, Mode=OneWay}"
                                  Command="{Binding Show_Insights_Analytics_View_Command}">
                         <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
@@ -154,6 +175,45 @@
                             <TextBlock Text="Reports" Style="{StaticResource Nav_Button_Text}"/>
                         </StackPanel>
                     </RadioButton>
+
+                    <!-- User Registration Button (Admin Only) - Very Bottom of Menu -->
+                    <Button Tag="{StaticResource Color1}"
+                            Height="50"
+                            Margin="-5,30,0,10"
+                            Command="{Binding Show_User_Registration_Command}"
+                            Visibility="{Binding Current_User_Account.RoleName, Converter={StaticResource AdminRoleToVisibilityConverter}}"
+                            ToolTip="Create HR User Account"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="{StaticResource BgPrimary}">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderThickness="4,0,0,0"
+                                                    BorderBrush="Transparent">
+                                                <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource FadeWhite}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource FontLight}"/>
+                                        <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal"
+                                    Background="Transparent">
+                            <icon:IconImage Icon="UserPlus" Style="{StaticResource Nav_Button_Icon}" />
+                            <TextBlock Text="Create User" Style="{StaticResource Nav_Button_Text}"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
             </Border>
@@ -239,10 +299,11 @@
                                     Tag="{StaticResource Color1}"
                                     Height="40"
                                     Width="40"
-                                    VerticalAlignment="Center">
+                                    VerticalAlignment="Center"
+                                    Command="{Binding Show_User_Profile_Command}">
                                 <Ellipse Height="40"
                                          Width="40"
-                                         Fill="Aqua">
+                                         Fill="{StaticResource Color1}">
 
                                 </Ellipse>
 

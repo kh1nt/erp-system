@@ -11,27 +11,17 @@ namespace erp_system.view_model
     public class Payroll_View_Model : View_Model_Base
     {
         public ObservableCollection<Payroll_Model> PayrollRecords { get; } = new ObservableCollection<Payroll_Model>();
-        public ObservableCollection<Employee_Model> Employees { get; } = new ObservableCollection<Employee_Model>();
-        public ObservableCollection<Payroll_Model> SelectedEmployeePayrolls { get; } = new ObservableCollection<Payroll_Model>();
+        public ObservableCollection<Payroll_Model> AllPayrollRecords { get; } = new ObservableCollection<Payroll_Model>();
+        public ObservableCollection<MonthFilterItem> AvailableMonths { get; } = new ObservableCollection<MonthFilterItem>();
+        public ObservableCollection<YearFilterItem> AvailableYears { get; } = new ObservableCollection<YearFilterItem>();
 
-        private Employee_Model? _selectedEmployee;
         private decimal _totalPayroll = 0;
         private decimal _totalCommissions = 0;
-        private DateTime _payrollPeriodStart = DateTime.Today.AddDays(-15);
-        private DateTime _payrollPeriodEnd = DateTime.Today;
+        private MonthFilterItem? _selectedMonth;
+        private YearFilterItem? _selectedYear;
         
         private readonly DataService _dataService;
 
-        public Employee_Model? SelectedEmployee
-        {
-            get => _selectedEmployee;
-            set
-            {
-                _selectedEmployee = value;
-                OnPropertyChanged(nameof(SelectedEmployee));
-                LoadEmployeePayrolls();
-            }
-        }
 
         public decimal TotalPayroll
         {
@@ -53,26 +43,29 @@ namespace erp_system.view_model
             }
         }
 
-
-        public DateTime PayrollPeriodStart
+        public MonthFilterItem? SelectedMonth
         {
-            get => _payrollPeriodStart;
+            get => _selectedMonth;
             set
             {
-                _payrollPeriodStart = value;
-                OnPropertyChanged(nameof(PayrollPeriodStart));
+                _selectedMonth = value;
+                OnPropertyChanged(nameof(SelectedMonth));
+                ApplyFilter();
             }
         }
 
-        public DateTime PayrollPeriodEnd
+        public YearFilterItem? SelectedYear
         {
-            get => _payrollPeriodEnd;
+            get => _selectedYear;
             set
             {
-                _payrollPeriodEnd = value;
-                OnPropertyChanged(nameof(PayrollPeriodEnd));
+                _selectedYear = value;
+                OnPropertyChanged(nameof(SelectedYear));
+                ApplyFilter();
             }
         }
+
+
 
         public Payroll_View_Model()
         {
@@ -90,27 +83,26 @@ namespace erp_system.view_model
         public void LoadData()
         {
             try
-        {
-            PayrollRecords.Clear();
-                Employees.Clear();
+            {
+                PayrollRecords.Clear();
+                AllPayrollRecords.Clear();
+                AvailableMonths.Clear();
 
-            var data = new DataService();
-                var empRepo = new Employee_Repository();
+                var data = new DataService();
 
-                // Load payroll records
+                // Load payroll records from database
                 var payrollData = data.GetPayrollRecords();
                 foreach (var record in payrollData)
                 {
-                PayrollRecords.Add(record);
+                    AllPayrollRecords.Add(record);
                 }
 
-                // Load employees
-                var empData = empRepo.GetAll();
-                foreach (var emp in empData)
-                {
-                    Employees.Add(emp);
-                }
-
+                // Create filter options
+                CreateFilterOptions();
+                
+                // Apply current filter
+                ApplyFilter();
+                
                 CalculateTotals();
             }
             catch (Exception ex)
@@ -120,16 +112,6 @@ namespace erp_system.view_model
             }
         }
 
-        private void LoadEmployeePayrolls()
-        {
-            SelectedEmployeePayrolls.Clear();
-            if (SelectedEmployee != null)
-            {
-                var employeePayrolls = PayrollRecords.Where(p => p.EmployeeID == SelectedEmployee.EmployeeID).ToList();
-                foreach (var payroll in employeePayrolls)
-                    SelectedEmployeePayrolls.Add(payroll);
-            }
-        }
 
         private void CalculateTotals()
         {
@@ -139,18 +121,6 @@ namespace erp_system.view_model
 
         public System.Windows.Input.ICommand Refresh_Command => new View_Model_Command(_ => LoadData());
 
-        public System.Windows.Input.ICommand ProcessPayroll_Command => new View_Model_Command(_ =>
-        {
-            try
-            {
-                ProcessPayroll();
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show($"Error processing payroll: {ex.Message}", "Error", 
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-            }
-        });
 
         public System.Windows.Input.ICommand GeneratePayroll_Command => new View_Model_Command(_ =>
         {
@@ -165,88 +135,18 @@ namespace erp_system.view_model
             }
         });
 
-        private void ProcessPayroll()
-        {
-            if (SelectedEmployee == null)
-            {
-                System.Windows.MessageBox.Show("Please select an employee to process payroll.", "No Selection", 
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
-                return;
-            }
-
-            var result = System.Windows.MessageBox.Show(
-                $"Generate payroll for {SelectedEmployee.FirstName} {SelectedEmployee.LastName} and save to database?", 
-                "Confirm Payroll Processing", 
-                System.Windows.MessageBoxButton.YesNo, 
-                System.Windows.MessageBoxImage.Question);
-
-            if (result == System.Windows.MessageBoxResult.Yes)
-            {
-                try
-                {
-                    var payrollRepo = new Payroll_Repository();
-                    var basicSalary = CalculateBasicSalary(SelectedEmployee);
-                    var bonuses = CalculateBonuses(SelectedEmployee);
-                    var deductions = CalculateDeductions(basicSalary);
-                    
-                    // Calculate leave-related payroll impacts
-                    var unpaidLeaveDays = _dataService.GetUnpaidLeaveDays(SelectedEmployee.EmployeeID, PayrollPeriodStart, PayrollPeriodEnd);
-                    var paidLeaveDays = _dataService.GetPaidLeaveDays(SelectedEmployee.EmployeeID, PayrollPeriodStart, PayrollPeriodEnd);
-                    var leaveBalanceBonus = _dataService.GetLeaveBalanceBonus(SelectedEmployee.EmployeeID);
-                    
-                    var dailyRate = basicSalary / 22; // Assuming 22 working days per month
-                    var leaveDeductions = unpaidLeaveDays * dailyRate;
-                    var leaveBonuses = leaveBalanceBonus;
-                    
-                    var netPay = basicSalary + bonuses + leaveBonuses - deductions - leaveDeductions;
-
-                    var payroll = new Payroll_Model
-                    {
-                        PeriodStart = PayrollPeriodStart,
-                        PeriodEnd = PayrollPeriodEnd,
-                        BasicSalary = basicSalary,
-                        Bonuses = bonuses,
-                        Deductions = deductions,
-                        NetPay = netPay,
-                        GeneratedDate = DateTime.Now,
-                        EmployeeID = SelectedEmployee.EmployeeID,
-                        EmployeeName = $"{SelectedEmployee.FirstName} {SelectedEmployee.LastName}",
-                        Position = SelectedEmployee.Position,
-                        // Leave-related fields
-                        LeaveDeductions = leaveDeductions,
-                        LeaveBonuses = leaveBonuses,
-                        UnpaidLeaveDays = unpaidLeaveDays,
-                        PaidLeaveDays = paidLeaveDays,
-                        LeaveBalanceBonus = leaveBalanceBonus
-                    };
-
-                    var payrollId = payrollRepo.Add(payroll);
-                    payroll.PayrollID = payrollId; // Set the actual ID from database
-                    
-                    PayrollRecords.Add(payroll);
-                    CalculateTotals();
-
-                    System.Windows.MessageBox.Show($"Payroll saved for {SelectedEmployee.FirstName} {SelectedEmployee.LastName}!\n\n" +
-                        $"Payroll ID: {payrollId}\n" +
-                        $"Basic Salary: {basicSalary:C}\n" +
-                        $"Bonuses: {bonuses:C}\n" +
-                        $"Net Pay: {netPay:C}", 
-                        "Payroll Saved", 
-                        System.Windows.MessageBoxButton.OK, 
-                        System.Windows.MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show($"Error processing payroll: {ex.Message}", "Error", 
-                        System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                }
-            }
-        }
 
         private void GeneratePayrollForPeriod()
         {
+            var periodStart = DateTime.Today.AddDays(-15);
+            var periodEnd = DateTime.Today;
+            
             var result = System.Windows.MessageBox.Show(
-                $"Generate payroll for all employees from {PayrollPeriodStart:yyyy-MM-dd} to {PayrollPeriodEnd:yyyy-MM-dd} and save to database?", 
+                $"Generate payroll for all active employees?\n\n" +
+                $"Payroll Period:\n" +
+                $"Start Date: {periodStart:MMMM dd, yyyy}\n" +
+                $"End Date: {periodEnd:MMMM dd, yyyy}\n\n" +
+                $"This will create payroll records for the above period and save to database.", 
                 "Generate Payroll", 
                 System.Windows.MessageBoxButton.YesNo, 
                 System.Windows.MessageBoxImage.Question);
@@ -255,14 +155,36 @@ namespace erp_system.view_model
             {
                 try
                 {
+                    // Check if payroll already exists for this period
+                    if (_dataService.PayrollExistsForPeriod(periodStart, periodEnd))
+                    {
+                        var existingPayroll = _dataService.GetExistingPayrollForPeriod(periodStart, periodEnd);
+                        var existingPeriod = existingPayroll != null 
+                            ? $"{existingPayroll.PeriodStart:MMM dd, yyyy} - {existingPayroll.PeriodEnd:MMM dd, yyyy}"
+                            : $"{periodStart:MMM dd, yyyy} - {periodEnd:MMM dd, yyyy}";
+                        var generatedDate = existingPayroll?.GeneratedDate.ToString("MMM dd, yyyy 'at' h:mm tt") ?? "Unknown";
+
+                        System.Windows.MessageBox.Show($"Payroll for {periodStart:MMMM yyyy} has already been generated!\n\n" +
+                            $"Existing Period: {existingPeriod}\n" +
+                            $"Generated: {generatedDate}\n\n" +
+                            $"Please select a different month or delete existing payroll records first.", 
+                            "Payroll Already Exists", 
+                            System.Windows.MessageBoxButton.OK, 
+                            System.Windows.MessageBoxImage.Warning);
+                        return;
+                    }
+
                     var payrollRepo = new Payroll_Repository();
+                    var empRepo = new Employee_Repository();
                     int successCount = 0;
                     int errorCount = 0;
 
+                    // Get all active and on leave employees
+                    var employees = empRepo.GetAll().Where(e => e.Status == "Active" || e.Status == "On Leave").ToList();
 
-                    if (Employees.Count == 0)
+                    if (employees.Count == 0)
                     {
-                        System.Windows.MessageBox.Show("No employees found! Please add employees first in Employee Management.", "No Employees", 
+                        System.Windows.MessageBox.Show("No active or on leave employees found! Please add employees first in Employee Management.", "No Employees", 
                             System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                         return;
                     }
@@ -270,50 +192,34 @@ namespace erp_system.view_model
                     // Clear existing records first
                     PayrollRecords.Clear();
 
-                    foreach (var employee in Employees)
+                    foreach (var employee in employees)
                     {
                         try
                         {
-                            // Check if employee has valid ID
-                            if (employee.EmployeeID <= 0)
+                            // Check if employee has valid ID and salary
+                            if (employee.EmployeeID <= 0 || employee.BasicSalary <= 0)
                             {
                                 errorCount++;
                                 continue;
                             }
 
-                            var basicSalary = CalculateBasicSalary(employee);
+                            var basicSalary = CalculateProratedSalary(employee, periodStart, periodEnd);
                             var bonuses = CalculateBonuses(employee);
                             var deductions = CalculateDeductions(basicSalary);
-                            
-                            // Calculate leave-related payroll impacts
-                            var unpaidLeaveDays = _dataService.GetUnpaidLeaveDays(employee.EmployeeID, PayrollPeriodStart, PayrollPeriodEnd);
-                            var paidLeaveDays = _dataService.GetPaidLeaveDays(employee.EmployeeID, PayrollPeriodStart, PayrollPeriodEnd);
-                            var leaveBalanceBonus = _dataService.GetLeaveBalanceBonus(employee.EmployeeID);
-                            
-                            var dailyRate = basicSalary / 22; // Assuming 22 working days per month
-                            var leaveDeductions = unpaidLeaveDays * dailyRate;
-                            var leaveBonuses = leaveBalanceBonus;
-                            
-                            var netPay = basicSalary + bonuses + leaveBonuses - deductions - leaveDeductions;
+                            var netPay = basicSalary + bonuses - deductions;
 
                             var payroll = new Payroll_Model
                             {
-                                PeriodStart = PayrollPeriodStart,
-                                PeriodEnd = PayrollPeriodEnd,
-                                BasicSalary = basicSalary,
+                                PeriodStart = periodStart,
+                                PeriodEnd = periodEnd,
+                                BasicSalary = basicSalary, // This will be the prorated salary
                                 Bonuses = bonuses,
                                 Deductions = deductions,
                                 NetPay = netPay,
                                 GeneratedDate = DateTime.Now,
                                 EmployeeID = employee.EmployeeID,
                                 EmployeeName = $"{employee.FirstName} {employee.LastName}",
-                                Position = employee.Position,
-                                // Leave-related fields
-                                LeaveDeductions = leaveDeductions,
-                                LeaveBonuses = leaveBonuses,
-                                UnpaidLeaveDays = unpaidLeaveDays,
-                                PaidLeaveDays = paidLeaveDays,
-                                LeaveBalanceBonus = leaveBalanceBonus
+                                Position = employee.Position
                             };
 
                             var payrollId = payrollRepo.Add(payroll);
@@ -328,32 +234,24 @@ namespace erp_system.view_model
                         }
                     }
 
-                    CalculateTotals();
+                    // Reload data to include new records
+                    LoadData();
 
-                    // If all failed, create sample data for demonstration
-                    if (successCount == 0 && errorCount > 0)
-                    {
-                        CreateSamplePayrollData();
-                        CalculateTotals();
-                        
-                        System.Windows.MessageBox.Show($"Database save failed, but created {PayrollRecords.Count} sample records for demonstration.\n\n" +
-                            $"Total Payroll: {TotalPayroll:C}\n" +
-                            $"Total Bonuses: {TotalCommissions:C}\n\n" +
-                            $"Check Debug Output for specific error details.", 
-                            "Sample Data Created", 
-                            System.Windows.MessageBoxButton.OK, 
-                            System.Windows.MessageBoxImage.Warning);
-                    }
-                    else
+                    if (successCount > 0)
                     {
                         System.Windows.MessageBox.Show($"Payroll generation completed!\n\n" +
-                            $"Successfully saved: {successCount} records\n" +
-                            $"Errors: {errorCount} records\n\n" +
+                            $"Successfully processed: {successCount} employees\n" +
+                            $"Errors: {errorCount} employees\n\n" +
                             $"Total Payroll: {TotalPayroll:C}\n" +
                             $"Total Bonuses: {TotalCommissions:C}", 
                             "Payroll Generated", 
                             System.Windows.MessageBoxButton.OK, 
                             System.Windows.MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show($"Failed to generate payroll for any employees. Please check employee data and try again.", "Generation Failed", 
+                            System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                     }
                 }
                 catch (Exception ex)
@@ -364,55 +262,60 @@ namespace erp_system.view_model
             }
         }
 
-        private void CreateSamplePayrollData()
+
+        private decimal CalculateProratedSalary(Employee_Model employee, DateTime periodStart, DateTime periodEnd)
         {
-            var random = new Random();
-            PayrollRecords.Clear();
-
-            foreach (var employee in Employees)
+            // For active employees, return full salary
+            if (employee.Status == "Active")
             {
-                var basicSalary = CalculateBasicSalary(employee);
-                var bonuses = CalculateBonuses(employee);
-                var deductions = CalculateDeductions(basicSalary);
-                var netPay = basicSalary + bonuses - deductions;
-
-                var payroll = new Payroll_Model
-                {
-                    PayrollID = random.Next(1000, 9999), // Sample ID
-                    PeriodStart = PayrollPeriodStart,
-                    PeriodEnd = PayrollPeriodEnd,
-                    BasicSalary = basicSalary,
-                    Bonuses = bonuses,
-                    Deductions = deductions,
-                    NetPay = netPay,
-                    GeneratedDate = DateTime.Now,
-                    EmployeeID = employee.EmployeeID,
-                    EmployeeName = $"{employee.FirstName} {employee.LastName}",
-                    Position = employee.Position
-                };
-
-                PayrollRecords.Add(payroll);
+                return employee.BasicSalary;
             }
-        }
 
-        private decimal CalculateBasicSalary(Employee_Model employee)
-        {
-            // Basic salary calculation based on position
-            return employee.Position.ToLower() switch
+            // For employees on leave, calculate prorated salary
+            if (employee.Status == "On Leave")
             {
-                "manager" => 50000,
-                "supervisor" => 35000,
-                "senior" => 25000,
-                "junior" => 20000,
-                _ => 15000
-            };
+                var dataService = new DataService();
+                var totalDaysInPeriod = (periodEnd - periodStart).Days + 1;
+                var unpaidLeaveDays = dataService.GetUnpaidLeaveDays(employee.EmployeeID, periodStart, periodEnd);
+                var paidLeaveDays = dataService.GetPaidLeaveDays(employee.EmployeeID, periodStart, periodEnd);
+                
+                // Calculate working days (total days minus unpaid leave days)
+                var workingDays = totalDaysInPeriod - unpaidLeaveDays;
+                
+                // Ensure working days is not negative
+                workingDays = Math.Max(0, workingDays);
+                
+                // Calculate prorated salary based on working days
+                var dailyRate = employee.BasicSalary / totalDaysInPeriod;
+                var proratedSalary = workingDays * dailyRate;
+                
+                return Math.Round(proratedSalary, 2);
+            }
+
+            // For other statuses, return 0
+            return 0;
         }
 
         private decimal CalculateBonuses(Employee_Model employee)
         {
-            // Simple bonus calculation - could be enhanced with performance metrics
+            // Performance-based bonus calculation
             var random = new Random();
-            return random.Next(0, 5000); // Random bonus between 0-5000
+            
+            // Base bonus based on position level
+            decimal baseBonus = employee.Position.ToLower() switch
+            {
+                var pos when pos.Contains("manager") || pos.Contains("director") => 5000,
+                var pos when pos.Contains("supervisor") || pos.Contains("lead") => 3000,
+                var pos when pos.Contains("senior") => 2000,
+                var pos when pos.Contains("junior") || pos.Contains("associate") => 1000,
+                _ => 500
+            };
+
+            // Add performance variation (±30% of base bonus)
+            var variation = (decimal)(random.NextDouble() - 0.5) * 0.6m; // -30% to +30%
+            var performanceMultiplier = 1 + variation;
+            
+            return Math.Round(baseBonus * performanceMultiplier, 2);
         }
 
         private decimal CalculateDeductions(decimal basicSalary)
@@ -431,5 +334,102 @@ namespace erp_system.view_model
 
             return sss + philhealth + pagibig + incomeTax;
         }
+
+        private void CreateFilterOptions()
+        {
+            // Clear existing options
+            AvailableMonths.Clear();
+            AvailableYears.Clear();
+
+            // Add "All" options
+            AvailableMonths.Add(new MonthFilterItem { DisplayText = "All Months", Value = null });
+            AvailableYears.Add(new YearFilterItem { DisplayText = "All Years", Value = null });
+
+            // Add all 12 months
+            for (int month = 1; month <= 12; month++)
+            {
+                var monthName = new DateTime(2024, month, 1).ToString("MMMM");
+                AvailableMonths.Add(new MonthFilterItem 
+                { 
+                    DisplayText = monthName, 
+                    Value = month 
+                });
+            }
+
+            // Get unique years from payroll records
+            var uniqueYears = AllPayrollRecords
+                .Select(p => p.PeriodStart.Year)
+                .Distinct()
+                .OrderByDescending(x => x)
+                .ToList();
+
+            foreach (var year in uniqueYears)
+            {
+                AvailableYears.Add(new YearFilterItem 
+                { 
+                    DisplayText = year.ToString(), 
+                    Value = year 
+                });
+            }
+
+            // Set default selections
+            if (AvailableMonths.Count > 0)
+            {
+                SelectedMonth = AvailableMonths[0];
+            }
+            if (AvailableYears.Count > 0)
+            {
+                SelectedYear = AvailableYears[0];
+            }
+        }
+
+        private void ApplyFilter()
+        {
+            PayrollRecords.Clear();
+
+            var filteredRecords = AllPayrollRecords.AsEnumerable();
+
+            // Apply month filter
+            if (SelectedMonth?.Value != null)
+            {
+                var selectedMonth = SelectedMonth.Value.Value;
+                
+                // Debug: Show what we're filtering for
+                System.Diagnostics.Debug.WriteLine($"Filtering for month: {selectedMonth}");
+                
+                // Show all available months in data
+                var availableMonths = AllPayrollRecords.Select(p => p.PeriodStart.Month).Distinct().OrderBy(m => m);
+                System.Diagnostics.Debug.WriteLine($"Available months in data: {string.Join(", ", availableMonths)}");
+                
+                filteredRecords = filteredRecords.Where(p => p.PeriodStart.Month == selectedMonth);
+            }
+
+            // Apply year filter
+            if (SelectedYear?.Value != null)
+            {
+                var selectedYear = SelectedYear.Value.Value;
+                filteredRecords = filteredRecords.Where(p => p.PeriodStart.Year == selectedYear);
+            }
+
+            // Add filtered records to display collection
+            foreach (var record in filteredRecords)
+            {
+                PayrollRecords.Add(record);
+            }
+
+            CalculateTotals();
+        }
+    }
+
+    public class MonthFilterItem
+    {
+        public string DisplayText { get; set; } = string.Empty;
+        public int? Value { get; set; }
+    }
+
+    public class YearFilterItem
+    {
+        public string DisplayText { get; set; } = string.Empty;
+        public int? Value { get; set; }
     }
 }

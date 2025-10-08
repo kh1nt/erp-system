@@ -1,0 +1,146 @@
+<Window x:Class="erp_system.view.EmployeeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding DialogTitle}" Height="650" Width="700"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#F8F9FA">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header with Icon -->
+        <Border Grid.Row="0" Background="White" CornerRadius="6" Padding="12" Margin="0,0,0,10" 
+                BorderBrush="#E0E0E0" BorderThickness="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="👤" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding DialogTitle}" FontSize="16" FontWeight="Bold" 
+                           Foreground="#2C3E50" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Form Container -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Border Background="White" CornerRadius="6" Padding="20" 
+                    BorderBrush="#E0E0E0" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- First Name -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,15">
+                        <TextBlock Text="👤 First Name *" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <TextBox Text="{Binding FirstName}" Width="250" HorizontalAlignment="Left" 
+                                Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Last Name -->
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,15">
+                        <TextBlock Text="👤 Last Name *" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <TextBox Text="{Binding LastName}" Width="250" HorizontalAlignment="Left" 
+                                Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Email -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,15">
+                        <TextBlock Text="📧 Email Address *" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <TextBox Text="{Binding Email}" Width="520" HorizontalAlignment="Left" 
+                                Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Phone -->
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,10,15">
+                        <TextBlock Text="📞 Phone Number" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <TextBox Text="{Binding Phone}" Width="250" HorizontalAlignment="Left" 
+                                Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Position -->
+                    <StackPanel Grid.Row="2" Grid.Column="1" Margin="10,0,0,15">
+                        <TextBlock Text="💼 Position *" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <TextBox Text="{Binding Position}" Width="250" HorizontalAlignment="Left" 
+                                Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Basic Salary -->
+                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,10,15">
+                        <TextBlock Text="💰 Basic Salary *" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <TextBox Text="{Binding BasicSalary, StringFormat={}{0:N2}}" Width="250" HorizontalAlignment="Left" 
+                                Padding="8,6" FontSize="12" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Department -->
+                    <StackPanel Grid.Row="3" Grid.Column="1" Margin="10,0,0,15">
+                        <TextBlock Text="🏢 Department *" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDepartment}" 
+                                  DisplayMemberPath="DepartmentName" Width="250" HorizontalAlignment="Left" 
+                                  FontSize="12" Padding="8,6" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                  BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Status -->
+                    <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,10,15">
+                        <TextBlock Text="📊 Status" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <ComboBox ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding Status}" Width="250" HorizontalAlignment="Left" 
+                                  FontSize="12" Padding="8,6" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                  BorderThickness="1"/>
+                    </StackPanel>
+
+                    <!-- Hire Date -->
+                    <StackPanel Grid.Row="4" Grid.Column="1" Margin="10,0,0,15">
+                        <TextBlock Text="📅 Hire Date" FontWeight="SemiBold" FontSize="12" 
+                                   Margin="0,0,0,4" Foreground="#34495E"/>
+                        <DatePicker SelectedDate="{Binding HireDate}" Width="200" HorizontalAlignment="Left" 
+                                   FontSize="12" Padding="6,4" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                                   BorderThickness="1"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </ScrollViewer>
+
+        <!-- Buttons with Enhanced Styling -->
+        <Border Grid.Row="2" Background="White" CornerRadius="6" Padding="12" Margin="0,10,0,0" 
+                BorderBrush="#E0E0E0" BorderThickness="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="❌ Cancel" Command="{Binding Cancel_Command}" 
+                        Padding="15,6" Margin="0,0,8,0" Background="#E74C3C" Foreground="White" 
+                        BorderThickness="0" FontSize="12" FontWeight="SemiBold"
+                        Cursor="Hand"/>
+                <Button Content="{Binding SaveButtonText}" Command="{Binding Save_Command}" 
+                        Padding="15,6" Background="#27AE60" Foreground="White" BorderThickness="0" 
+                        FontSize="12" FontWeight="SemiBold" Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -31,13 +31,39 @@ namespace erp_system.Services
             return (int)cmd.ExecuteScalar();
         }
 
+        public bool UpdateEmployeeStatus(int employeeId, string newStatus)
+        {
+            try
+            {
+                using var con = new SqlConnection(_cs);
+                con.Open();
+                using var cmd = new SqlCommand(@"
+                    UPDATE Employees 
+                    SET Status = @Status 
+                    WHERE EmployeeID = @EmployeeID", con);
+                cmd.Parameters.AddWithValue("@Status", newStatus);
+                cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
+                
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating employee status: {ex.Message}");
+                return false;
+            }
+        }
+
         // EMPLOYEES
         public List<Employee_Model> GetEmployees()
         {
             var list = new List<Employee_Model>();
             using var con = new SqlConnection(_cs);
             con.Open();
-            using var cmd = new SqlCommand("SELECT EmployeeID, FirstName, LastName, Email, Phone, HireDate, Position, Status, DepartmentID FROM Employees", con);
+            using var cmd = new SqlCommand(@"
+                SELECT e.EmployeeID, e.FirstName, e.LastName, e.Email, e.Phone, e.HireDate, e.Position, e.BasicSalary, e.Status, e.DepartmentID, d.DepartmentName
+                FROM Employees e
+                LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID", con);
             using var rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
@@ -50,8 +76,10 @@ namespace erp_system.Services
                     Phone = rdr[4]?.ToString() ?? string.Empty,
                     HireDate = rdr.GetDateTime(5),
                     Position = rdr[6]?.ToString() ?? string.Empty,
-                    Status = rdr[7]?.ToString() ?? string.Empty,
-                    DepartmentID = rdr.GetInt32(8)
+                    BasicSalary = rdr.GetDecimal(7),
+                    Status = rdr[8]?.ToString() ?? string.Empty,
+                    DepartmentID = rdr.GetInt32(9),
+                    DepartmentName = rdr[10]?.ToString() ?? string.Empty
                 });
             }
             return list;
@@ -63,7 +91,7 @@ namespace erp_system.Services
             using var con = new SqlConnection(_cs);
             con.Open();
             using var cmd = new SqlCommand(@"
-                SELECT e.EmployeeID, e.FirstName, e.LastName, e.Email, e.Phone, e.HireDate, e.Position, e.Status, e.DepartmentID 
+                SELECT e.EmployeeID, e.FirstName, e.LastName, e.Email, e.Phone, e.HireDate, e.Position, e.BasicSalary, e.Status, e.DepartmentID, d.DepartmentName
                 FROM Employees e
                 INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID
                 WHERE d.DepartmentName = @DepartmentName", con);
@@ -80,8 +108,10 @@ namespace erp_system.Services
                     Phone = rdr[4]?.ToString() ?? string.Empty,
                     HireDate = rdr.GetDateTime(5),
                     Position = rdr[6]?.ToString() ?? string.Empty,
-                    Status = rdr[7]?.ToString() ?? string.Empty,
-                    DepartmentID = rdr.GetInt32(8)
+                    BasicSalary = rdr.GetDecimal(7),
+                    Status = rdr[8]?.ToString() ?? string.Empty,
+                    DepartmentID = rdr.GetInt32(9),
+                    DepartmentName = rdr[10]?.ToString() ?? string.Empty
                 });
             }
             return list;
@@ -118,7 +148,7 @@ namespace erp_system.Services
                 SELECT lr.LeaveRequestID, lr.StartDate, lr.EndDate, lr.RequestDate, 
                        lr.Status, lr.ApprovedBy, lr.EmployeeID, lr.LeaveID,
                        e.FirstName + ' ' + e.LastName as EmployeeName,
-                       l.TypeName as TypeName
+                       l.TypeName as TypeName, lr.Reason
                 FROM Leave_Requests lr
                 INNER JOIN Employees e ON lr.EmployeeID = e.EmployeeID
                 INNER JOIN Leaves l ON lr.LeaveID = l.LeaveID
@@ -137,7 +167,8 @@ namespace erp_system.Services
                     EmployeeID = rdr.GetInt32(6),
                     LeaveID = rdr.GetInt32(7),
                     EmployeeName = rdr[8]?.ToString() ?? string.Empty,
-                    TypeName = rdr[9]?.ToString() ?? string.Empty
+                    TypeName = rdr[9]?.ToString() ?? string.Empty,
+                    Reason = rdr[10]?.ToString() ?? string.Empty
                 });
             }
             return list;
@@ -333,24 +364,11 @@ namespace erp_system.Services
             con.Open();
             using var cmd = new SqlCommand(@"
                 SELECT pr.PerformanceRecordID, pr.ReviewDate, pr.Score, pr.Remarks, pr.EmployeeID,
-                       e.FirstName + ' ' + e.LastName as EmployeeName, e.Position, d.DepartmentName,
-                       -- Calculate sales target (assume 10000 as default target for sales employees)
-                       CASE 
-                           WHEN e.Position LIKE '%Sales%' OR e.Position LIKE '%Sales%' THEN 10000.00
-                           ELSE 0.00
-                       END as SalesTarget,
-                       -- Calculate actual sales achieved in the same month as review
-                       ISNULL((
-                           SELECT SUM(s.Amount) 
-                           FROM Sales s 
-                           WHERE s.EmployeeID = pr.EmployeeID 
-                           AND YEAR(s.SaleDate) = YEAR(pr.ReviewDate) 
-                           AND MONTH(s.SaleDate) = MONTH(pr.ReviewDate)
-                       ), 0.00) as SalesAchieved
+                       e.FirstName + ' ' + e.LastName as EmployeeName, e.Position, d.DepartmentName, d.DepartmentID
                 FROM Performance_Records pr
                 INNER JOIN Employees e ON pr.EmployeeID = e.EmployeeID
                 LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
-                ORDER BY pr.ReviewDate DESC", con);
+                ORDER BY pr.ReviewDate DESC, pr.PerformanceRecordID DESC", con);
             using var rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
@@ -364,11 +382,93 @@ namespace erp_system.Services
                     EmployeeName = rdr[5]?.ToString() ?? string.Empty,
                     Position = rdr[6]?.ToString() ?? string.Empty,
                     Department = rdr[7]?.ToString() ?? string.Empty,
-                    SalesTarget = rdr.GetDecimal(8),
-                    SalesAchieved = rdr.GetDecimal(9)
+                    DepartmentID = rdr.IsDBNull(8) ? 0 : rdr.GetInt32(8),
+                    ReviewType = "Annual", // Default value since column doesn't exist
+                    ReviewerName = string.Empty, // Default value since column doesn't exist
+                    Goals = string.Empty, // Default value since column doesn't exist
+                    Strengths = string.Empty, // Default value since column doesn't exist
+                    AreasForImprovement = string.Empty // Default value since column doesn't exist
                 });
             }
             return list;
+        }
+
+        // GET ALL DEPARTMENTS
+        public List<DepartmentInfo> GetAllDepartments()
+        {
+            var departments = new List<DepartmentInfo>();
+            using var con = new SqlConnection(_cs);
+            con.Open();
+            using var cmd = new SqlCommand("SELECT DepartmentID, DepartmentName FROM Departments ORDER BY DepartmentName", con);
+            using var rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                var deptName = rdr[1]?.ToString();
+                if (!string.IsNullOrEmpty(deptName))
+                {
+                    departments.Add(new DepartmentInfo
+                    {
+                        DepartmentID = rdr.GetInt32(0),
+                        DepartmentName = deptName.Trim()
+                    });
+                }
+            }
+            return departments;
+        }
+
+        // GET SALES TREND DATA
+        public List<SalesTrendData> GetSalesTrendData()
+        {
+            var list = new List<SalesTrendData>();
+            using var con = new SqlConnection(_cs);
+            con.Open();
+            using var cmd = new SqlCommand(@"
+                SELECT 
+                    FORMAT(s.SaleDate, 'MMM yyyy') as Month,
+                    SUM(s.Amount) as Amount,
+                    COUNT(*) as TransactionCount
+                FROM Sales s
+                WHERE s.SaleDate >= DATEADD(MONTH, -6, GETDATE())
+                GROUP BY YEAR(s.SaleDate), MONTH(s.SaleDate), FORMAT(s.SaleDate, 'MMM yyyy')
+                ORDER BY YEAR(s.SaleDate), MONTH(s.SaleDate)", con);
+            using var rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                list.Add(new SalesTrendData
+                {
+                    Month = rdr[0]?.ToString() ?? string.Empty,
+                    Amount = rdr.GetDecimal(1),
+                    TransactionCount = rdr.GetInt32(2)
+                });
+            }
+            return list;
+        }
+
+        // ADD PERFORMANCE RECORD
+        public bool AddPerformanceRecord(Performance_Model performanceRecord)
+        {
+            try
+            {
+                using var con = new SqlConnection(_cs);
+                con.Open();
+                using var cmd = new SqlCommand(@"
+                    INSERT INTO Performance_Records (ReviewDate, Score, Remarks, EmployeeID)
+                    VALUES (@ReviewDate, @Score, @Remarks, @EmployeeID)", con);
+                
+                cmd.Parameters.AddWithValue("@ReviewDate", performanceRecord.ReviewDate);
+                cmd.Parameters.AddWithValue("@Score", performanceRecord.Score);
+                cmd.Parameters.AddWithValue("@Remarks", performanceRecord.Remarks ?? string.Empty);
+                cmd.Parameters.AddWithValue("@EmployeeID", performanceRecord.EmployeeID);
+                
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                // Log the error (you might want to use a proper logging framework)
+                System.Diagnostics.Debug.WriteLine($"Error adding performance record: {ex.Message}");
+                return false;
+            }
         }
 
         // PERFORMANCE STATISTICS
@@ -384,33 +484,7 @@ namespace erp_system.Services
                     ISNULL(AVG(pr.Score), 0) as AverageScore,
                     COUNT(CASE WHEN pr.Score >= 4.0 THEN 1 END) as HighPerformers,
                     COUNT(CASE WHEN pr.Score >= 2.5 AND pr.Score < 4.0 THEN 1 END) as AveragePerformers,
-                    COUNT(CASE WHEN pr.Score < 2.5 THEN 1 END) as LowPerformers,
-                    -- Calculate average sales achievement for sales employees
-                    ISNULL((
-                        SELECT AVG(
-                            CASE 
-                                WHEN s.SalesTarget > 0 THEN (s.SalesAchieved / s.SalesTarget) * 100
-                                ELSE 0
-                            END
-                        )
-                        FROM (
-                            SELECT pr2.EmployeeID,
-                                CASE 
-                                    WHEN e2.Position LIKE '%Sales%' THEN 10000.00
-                                    ELSE 0.00
-                                END as SalesTarget,
-                                ISNULL((
-                                    SELECT SUM(s2.Amount) 
-                                    FROM Sales s2 
-                                    WHERE s2.EmployeeID = pr2.EmployeeID 
-                                    AND YEAR(s2.SaleDate) = YEAR(pr2.ReviewDate) 
-                                    AND MONTH(s2.SaleDate) = MONTH(pr2.ReviewDate)
-                                ), 0.00) as SalesAchieved
-                            FROM Performance_Records pr2
-                            INNER JOIN Employees e2 ON pr2.EmployeeID = e2.EmployeeID
-                        ) s
-                        WHERE s.SalesTarget > 0
-                    ), 0.00) as AvgSalesAchievement
+                    COUNT(CASE WHEN pr.Score < 2.5 THEN 1 END) as LowPerformers
                 FROM Performance_Records pr", con);
             
             using var rdr = cmd.ExecuteReader();
@@ -421,7 +495,6 @@ namespace erp_system.Services
                 stats["HighPerformers"] = rdr.GetInt32(2);
                 stats["AveragePerformers"] = rdr.GetInt32(3);
                 stats["LowPerformers"] = rdr.GetInt32(4);
-                stats["AvgSalesAchievement"] = Math.Round(rdr.GetDecimal(5), 1);
             }
             
             return stats;
@@ -477,17 +550,83 @@ namespace erp_system.Services
         }
 
         // PAYROLL RECORDS
+        public bool PayrollExistsForPeriod(DateTime periodStart, DateTime periodEnd)
+        {
+            using var con = new SqlConnection(_cs);
+            con.Open();
+            
+            // Check for exact period match first
+            using var cmd = new SqlCommand(@"
+                SELECT COUNT(*) 
+                FROM Payrolls 
+                WHERE PeriodStart = @PeriodStart AND PeriodEnd = @PeriodEnd", con);
+            cmd.Parameters.AddWithValue("@PeriodStart", periodStart);
+            cmd.Parameters.AddWithValue("@PeriodEnd", periodEnd);
+            
+            var exactCount = (int)cmd.ExecuteScalar();
+            if (exactCount > 0) return true;
+            
+            // Also check for overlapping periods in the same month/year
+            using var cmd2 = new SqlCommand(@"
+                SELECT COUNT(*) 
+                FROM Payrolls 
+                WHERE YEAR(PeriodStart) = @Year AND MONTH(PeriodStart) = @Month", con);
+            cmd2.Parameters.AddWithValue("@Year", periodStart.Year);
+            cmd2.Parameters.AddWithValue("@Month", periodStart.Month);
+            
+            var monthCount = (int)cmd2.ExecuteScalar();
+            return monthCount > 0;
+        }
+
+        public Payroll_Model? GetExistingPayrollForPeriod(DateTime periodStart, DateTime periodEnd)
+        {
+            using var con = new SqlConnection(_cs);
+            con.Open();
+            
+            using var cmd = new SqlCommand(@"
+                SELECT TOP 1 p.PayrollID, p.PeriodStart, p.PeriodEnd, e.BasicSalary, p.Bonuses, 
+                       p.Deductions, p.NetPay, p.Generated_Date, p.EmployeeID,
+                       e.FirstName + ' ' + e.LastName as EmployeeName, e.Position
+                FROM Payrolls p
+                INNER JOIN Employees e ON p.EmployeeID = e.EmployeeID
+                WHERE YEAR(p.PeriodStart) = @Year AND MONTH(p.PeriodStart) = @Month
+                ORDER BY p.Generated_Date DESC", con);
+            cmd.Parameters.AddWithValue("@Year", periodStart.Year);
+            cmd.Parameters.AddWithValue("@Month", periodStart.Month);
+            
+            using var rdr = cmd.ExecuteReader();
+            if (rdr.Read())
+            {
+                return new Payroll_Model
+                {
+                    PayrollID = rdr.GetInt32(0),
+                    PeriodStart = rdr.GetDateTime(1),
+                    PeriodEnd = rdr.GetDateTime(2),
+                    BasicSalary = rdr.GetDecimal(3),
+                    Bonuses = rdr.GetDecimal(4),
+                    Deductions = rdr.GetDecimal(5),
+                    NetPay = rdr.GetDecimal(6),
+                    GeneratedDate = rdr.GetDateTime(7),
+                    EmployeeID = rdr.GetInt32(8),
+                    EmployeeName = rdr[9]?.ToString() ?? string.Empty,
+                    Position = rdr[10]?.ToString() ?? string.Empty
+                };
+            }
+            return null;
+        }
+
         public List<Payroll_Model> GetPayrollRecords()
         {
             var list = new List<Payroll_Model>();
             using var con = new SqlConnection(_cs);
             con.Open();
             using var cmd = new SqlCommand(@"
-                SELECT p.PayrollID, p.PeriodStart, p.PeriodEnd, p.BasicSalary, p.Bonuses, 
-                       CAST(0 as decimal(18,2)) as Deductions, p.NetPay, p.Generated_Date, p.EmployeeID,
+                SELECT p.PayrollID, p.PeriodStart, p.PeriodEnd, e.BasicSalary, p.Bonuses, 
+                       p.Deductions, p.NetPay, p.Generated_Date, p.EmployeeID,
                        e.FirstName + ' ' + e.LastName as EmployeeName, e.Position
                 FROM Payrolls p
-                INNER JOIN Employees e ON p.EmployeeID = e.EmployeeID", con);
+                INNER JOIN Employees e ON p.EmployeeID = e.EmployeeID
+                ORDER BY p.Generated_Date DESC, p.PayrollID DESC", con);
             using var rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {

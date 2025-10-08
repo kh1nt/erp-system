@@ -12,6 +12,7 @@ namespace erp_system.model
         void Remove(User_Model user_Model);
         User_Model? GetbyId(int id);
         User_Model? GetByUsername(string username);
+        User_Model? GetByEmployeeId(int employeeId);
         IEnumerable<User_Model> GetAll();
         // ....
     }

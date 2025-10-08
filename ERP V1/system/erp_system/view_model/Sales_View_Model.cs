@@ -18,13 +18,28 @@ namespace erp_system.view_model
 
         public ObservableCollection<Sales_Model> Sales { get; } = new ObservableCollection<Sales_Model>();
         public ObservableCollection<Sales_Model> FilteredSales { get; } = new ObservableCollection<Sales_Model>();
+        public ObservableCollection<Sales_Model> PagedSales { get; } = new ObservableCollection<Sales_Model>();
         public ObservableCollection<Employee_Model> Employees { get; } = new ObservableCollection<Employee_Model>();
         public ObservableCollection<Department_Model> Departments { get; } = new ObservableCollection<Department_Model>();
         
-        // Analytics Collections
-        public ObservableCollection<TopPerformer_Model> TopPerformers { get; } = new ObservableCollection<TopPerformer_Model>();
-        public ObservableCollection<DepartmentPerformance_Model> DepartmentPerformance { get; } = new ObservableCollection<DepartmentPerformance_Model>();
-        public ObservableCollection<MonthlyTrend_Model> MonthlyTrends { get; } = new ObservableCollection<MonthlyTrend_Model>();
+        // Pagination properties
+        private int _currentPage = 1;
+        private const int PageSize = 7;
+        
+        public int CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                _currentPage = value;
+                OnPropertyChanged(nameof(CurrentPage));
+                UpdatePagedSales();
+            }
+        }
+        
+        public int TotalPages => (int)Math.Ceiling((double)FilteredSales.Count / PageSize);
+        public string PageInfo => $"Page {CurrentPage} of {TotalPages}";
+        
         
         public Dictionary<string, decimal> SalesSummary { get; set; } = new Dictionary<string, decimal>();
         
@@ -112,6 +127,7 @@ namespace erp_system.view_model
             {
                 _searchText = value;
                 OnPropertyChanged(nameof(SearchText));
+                ApplyFilters();
             }
         }
 
@@ -177,27 +193,9 @@ namespace erp_system.view_model
             TopPerformer = name;
             TopPerformerSales = amount;
             
-            LoadAnalyticsData();
             ApplyFilters();
         }
 
-        private void LoadAnalyticsData()
-        {
-            // Load top performers
-            TopPerformers.Clear();
-            foreach (var performer in _dataService.GetTopPerformers())
-                TopPerformers.Add(performer);
-
-            // Load department performance
-            DepartmentPerformance.Clear();
-            foreach (var dept in _dataService.GetDepartmentPerformance())
-                DepartmentPerformance.Add(dept);
-
-            // Load monthly trends
-            MonthlyTrends.Clear();
-            foreach (var trend in _dataService.GetMonthlyTrends())
-                MonthlyTrends.Add(trend);
-        }
 
         private void LoadEmployeesAndDepartments()
         {
@@ -250,7 +248,7 @@ namespace erp_system.view_model
                     s.Department.ToLower().Contains(searchLower));
             }
 
-            foreach (var sale in filtered.OrderByDescending(s => s.SaleDate))
+            foreach (var sale in filtered.OrderByDescending(s => s.SaleID))
                 FilteredSales.Add(sale);
 
             // Update summary properties
@@ -258,6 +256,34 @@ namespace erp_system.view_model
             OnPropertyChanged(nameof(FilteredTotalAmount));
             OnPropertyChanged(nameof(FilteredAverageAmount));
             OnPropertyChanged(nameof(FilteredDateRange));
+            
+            // Reset to first page and update paged sales
+            CurrentPage = 1;
+            UpdatePagedSales();
+        }
+        
+        private void UpdatePagedSales()
+        {
+            var filteredList = FilteredSales.ToList();
+            
+            // Ensure current page is valid
+            if (CurrentPage > TotalPages && TotalPages > 0)
+                CurrentPage = TotalPages;
+            if (CurrentPage < 1)
+                CurrentPage = 1;
+
+            var startIndex = (CurrentPage - 1) * PageSize;
+            var endIndex = Math.Min(startIndex + PageSize, filteredList.Count);
+
+            PagedSales.Clear();
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                PagedSales.Add(filteredList[i]);
+            }
+
+            OnPropertyChanged(nameof(PageInfo));
+            OnPropertyChanged(nameof(TotalPages));
+            OnPropertyChanged(nameof(CurrentPage));
         }
 
         // Commands
@@ -318,6 +344,29 @@ namespace erp_system.view_model
         public System.Windows.Input.ICommand ExportReport_Command => new View_Model_Command(_ => ExportReport());
         
         public System.Windows.Input.ICommand SetTargets_Command => new View_Model_Command(_ => SetTargets());
+        
+        // Pagination commands
+        public System.Windows.Input.ICommand FirstPage_Command => new View_Model_Command(_ =>
+        {
+            CurrentPage = 1;
+        });
+
+        public System.Windows.Input.ICommand PreviousPage_Command => new View_Model_Command(_ =>
+        {
+            if (CurrentPage > 1)
+                CurrentPage--;
+        });
+
+        public System.Windows.Input.ICommand NextPage_Command => new View_Model_Command(_ =>
+        {
+            if (CurrentPage < TotalPages)
+                CurrentPage++;
+        });
+
+        public System.Windows.Input.ICommand LastPage_Command => new View_Model_Command(_ =>
+        {
+            CurrentPage = TotalPages;
+        });
 
         private void ShowAddSaleDialog()
         {

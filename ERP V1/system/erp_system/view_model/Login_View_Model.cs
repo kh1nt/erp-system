@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Security;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Input;
@@ -14,7 +13,7 @@ namespace erp_system.view_model
     {
         //Fields
         private string _username = string.Empty;
-        private SecureString? _password;
+        private string _password = string.Empty;
         private string _error_message = string.Empty;
         private bool _is_view_visible = true;
 
@@ -31,7 +30,7 @@ namespace erp_system.view_model
                 OnPropertyChanged(nameof(Username));
             }
         }
-        public SecureString? Password
+        public string Password
         {
             get => _password;
 
@@ -81,7 +80,7 @@ namespace erp_system.view_model
         private bool Can_Execute_Login_Command(object? obj)
         {
             bool valid_data;
-            if (string.IsNullOrWhiteSpace(Username) || Username.Length < 3 || Password == null || Password.Length < 3)
+            if (string.IsNullOrWhiteSpace(Username) || Username.Length < 3 || string.IsNullOrWhiteSpace(Password) || Password.Length < 3)
                 valid_data = false;
             else
                 valid_data = true;

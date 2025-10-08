@@ -22,5 +22,21 @@ namespace erp_system.model
         public int LeaveID { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
         public string TypeName { get; set; } = string.Empty;
+        public string Reason { get; set; } = string.Empty;
+        
+        // Custom sort property for status priority: Pending=1, Approved=2, Rejected=3
+        public int StatusSortOrder
+        {
+            get
+            {
+                return Status switch
+                {
+                    "Pending" => 1,
+                    "Approved" => 2,
+                    "Rejected" => 3,
+                    _ => 4
+                };
+            }
+        }
     }
 }

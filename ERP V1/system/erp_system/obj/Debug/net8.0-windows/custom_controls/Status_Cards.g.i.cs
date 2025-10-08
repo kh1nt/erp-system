@@ -54,7 +54,7 @@ namespace erp_system.custom_controls {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/erp_system;V1.0.0.0;component/custom_controls/status_cards.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/erp_system;component/custom_controls/status_cards.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\custom_controls\Status_Cards.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

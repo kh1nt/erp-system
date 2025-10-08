@@ -12,8 +12,10 @@ namespace erp_system.model
         public string Phone { get; set; } = string.Empty;
         public DateTime HireDate { get; set; }
         public string Position { get; set; } = string.Empty;
+        public decimal BasicSalary { get; set; } = 0;
         public string Status { get; set; } = string.Empty;
         public int DepartmentID { get; set; }
+        public string DepartmentName { get; set; } = string.Empty;
     }
 }
 

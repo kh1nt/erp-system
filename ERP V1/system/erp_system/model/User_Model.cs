@@ -14,5 +14,9 @@ namespace erp_system.model
         public string First_Name { get; set; } = string.Empty;
         public string Last_Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string Position { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
+        public DateTime? HireDate { get; set; }
+        public int EmployeeID { get; set; }
     }
 }

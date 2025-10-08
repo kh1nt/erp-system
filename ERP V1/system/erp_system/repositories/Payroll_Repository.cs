@@ -14,13 +14,13 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"INSERT INTO Payrolls (PeriodStart, PeriodEnd, BasicSalary, Bonuses, NetPay, Generated_Date, EmployeeID)
+            command.CommandText = @"INSERT INTO Payrolls (PeriodStart, PeriodEnd, Bonuses, Deductions, NetPay, Generated_Date, EmployeeID)
                                     OUTPUT INSERTED.PayrollID
-                                    VALUES (@PeriodStart, @PeriodEnd, @BasicSalary, @Bonuses, @NetPay, @Generated_Date, @EmployeeID)";
+                                    VALUES (@PeriodStart, @PeriodEnd, @Bonuses, @Deductions, @NetPay, @Generated_Date, @EmployeeID)";
             command.Parameters.Add("@PeriodStart", SqlDbType.DateTime2).Value = entity.PeriodStart;
             command.Parameters.Add("@PeriodEnd", SqlDbType.DateTime2).Value = entity.PeriodEnd;
-            command.Parameters.Add("@BasicSalary", SqlDbType.Decimal).Value = entity.BasicSalary;
             command.Parameters.Add("@Bonuses", SqlDbType.Decimal).Value = entity.Bonuses;
+            command.Parameters.Add("@Deductions", SqlDbType.Decimal).Value = entity.Deductions;
             command.Parameters.Add("@NetPay", SqlDbType.Decimal).Value = entity.NetPay;
             command.Parameters.Add("@Generated_Date", SqlDbType.DateTime2).Value = entity.GeneratedDate;
             command.Parameters.Add("@EmployeeID", SqlDbType.Int).Value = entity.EmployeeID;
@@ -34,14 +34,14 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"UPDATE Payrolls SET PeriodStart=@PeriodStart, PeriodEnd=@PeriodEnd, BasicSalary=@BasicSalary, Bonuses=@Bonuses,
+            command.CommandText = @"UPDATE Payrolls SET PeriodStart=@PeriodStart, PeriodEnd=@PeriodEnd, Bonuses=@Bonuses, Deductions=@Deductions,
                                      NetPay=@NetPay, Generated_Date=@Generated_Date, EmployeeID=@EmployeeID
                                      WHERE PayrollID=@PayrollID";
             command.Parameters.Add("@PayrollID", SqlDbType.Int).Value = entity.PayrollID;
             command.Parameters.Add("@PeriodStart", SqlDbType.DateTime2).Value = entity.PeriodStart;
             command.Parameters.Add("@PeriodEnd", SqlDbType.DateTime2).Value = entity.PeriodEnd;
-            command.Parameters.Add("@BasicSalary", SqlDbType.Decimal).Value = entity.BasicSalary;
             command.Parameters.Add("@Bonuses", SqlDbType.Decimal).Value = entity.Bonuses;
+            command.Parameters.Add("@Deductions", SqlDbType.Decimal).Value = entity.Deductions;
             command.Parameters.Add("@NetPay", SqlDbType.Decimal).Value = entity.NetPay;
             command.Parameters.Add("@Generated_Date", SqlDbType.DateTime2).Value = entity.GeneratedDate;
             command.Parameters.Add("@EmployeeID", SqlDbType.Int).Value = entity.EmployeeID;
@@ -67,7 +67,7 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"SELECT PayrollID, PeriodStart, PeriodEnd, BasicSalary, Bonuses, NetPay, Generated_Date, EmployeeID
+            command.CommandText = @"SELECT PayrollID, PeriodStart, PeriodEnd, Bonuses, Deductions, NetPay, Generated_Date, EmployeeID
                                      FROM Payrolls WHERE PayrollID=@id";
             command.Parameters.Add("@id", SqlDbType.Int).Value = id;
             using var rdr = command.ExecuteReader();
@@ -78,12 +78,12 @@ namespace erp_system.repositories
                     PayrollID = rdr.GetInt32(0),
                     PeriodStart = rdr.GetDateTime(1),
                     PeriodEnd = rdr.GetDateTime(2),
-                    BasicSalary = rdr.GetDecimal(3),
-                    Bonuses = rdr.GetDecimal(4),
-                    Deductions = 0, // Default value since column doesn't exist in database
+                    Bonuses = rdr.GetDecimal(3),
+                    Deductions = rdr.GetDecimal(4),
                     NetPay = rdr.GetDecimal(5),
                     GeneratedDate = rdr.GetDateTime(6),
-                    EmployeeID = rdr.GetInt32(7)
+                    EmployeeID = rdr.GetInt32(7),
+                    BasicSalary = 0 // Will be populated from Employee data
                 };
             }
             return null;
@@ -97,7 +97,7 @@ namespace erp_system.repositories
             connection.Open();
 
             command.Connection = connection;
-            command.CommandText = @"SELECT PayrollID, PeriodStart, PeriodEnd, BasicSalary, Bonuses, NetPay, Generated_Date, EmployeeID FROM Payrolls";
+            command.CommandText = @"SELECT PayrollID, PeriodStart, PeriodEnd, Bonuses, Deductions, NetPay, Generated_Date, EmployeeID FROM Payrolls";
             using var rdr = command.ExecuteReader();
             while (rdr.Read())
             {
@@ -106,12 +106,12 @@ namespace erp_system.repositories
                     PayrollID = rdr.GetInt32(0),
                     PeriodStart = rdr.GetDateTime(1),
                     PeriodEnd = rdr.GetDateTime(2),
-                    BasicSalary = rdr.GetDecimal(3),
-                    Bonuses = rdr.GetDecimal(4),
-                    Deductions = 0, // Default value since column doesn't exist in database
+                    Bonuses = rdr.GetDecimal(3),
+                    Deductions = rdr.GetDecimal(4),
                     NetPay = rdr.GetDecimal(5),
                     GeneratedDate = rdr.GetDateTime(6),
-                    EmployeeID = rdr.GetInt32(7)
+                    EmployeeID = rdr.GetInt32(7),
+                    BasicSalary = 0 // Will be populated from Employee data
                 });
             }
             return list;

@@ -24,5 +24,38 @@ namespace erp_system.view
         {
             InitializeComponent();
         }
+
+        private void ColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                var columnName = GetColumnNameFromHeader(element);
+                if (DataContext is view_model.Performance_View_Model viewModel)
+                {
+                    viewModel.SortData(columnName);
+                }
+            }
+        }
+
+        private string GetColumnNameFromHeader(FrameworkElement header)
+        {
+            // Try to get the column name from the header content
+            if (header is ContentControl contentControl)
+            {
+                var content = contentControl.Content?.ToString();
+                return content switch
+                {
+                    "ID" => "RecordID",
+                    "Employee" => "EmployeeName",
+                    "Position" => "Position",
+                    "Department" => "Department",
+                    "Review Date" => "ReviewDate",
+                    "Score" => "Score",
+                    "Remarks" => "Remarks",
+                    _ => "ReviewDate"
+                };
+            }
+            return "ReviewDate";
+        }
     }
 }

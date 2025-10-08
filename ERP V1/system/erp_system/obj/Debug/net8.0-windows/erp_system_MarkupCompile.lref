@@ -3,6 +3,7 @@ FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\App.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\custom_controls\BackgroundCard.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\custom_controls\Bindable_Password_Box.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\custom_controls\Status_Cards.xaml;;
+FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\CreateLeaveRequestDialog.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\Dashboard_View.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\Employees_View.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\Form_Documents_View.xaml;;
@@ -15,4 +16,6 @@ FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\PasswordVe
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\Payroll_View.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\Performance_View.xaml;;
 FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\Sales_View.xaml;;
+FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\UserProfileDialog.xaml;;
+FC:\Users\khint\source\repos\erp-system\ERP V1\system\erp_system\view\UserRegistrationDialog.xaml;;
 

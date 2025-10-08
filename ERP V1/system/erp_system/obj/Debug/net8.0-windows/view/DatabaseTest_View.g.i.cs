@@ -101,7 +101,7 @@ namespace erp_system.view {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/erp_system;V1.0.0.0;component/view/databasetest_view.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/erp_system;component/view/databasetest_view.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\view\DatabaseTest_View.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

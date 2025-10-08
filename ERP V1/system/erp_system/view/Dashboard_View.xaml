@@ -6,114 +6,316 @@
              xmlns:local="clr-namespace:erp_system.view"
              xmlns:view_model="clr-namespace:erp_system.view_model"
              xmlns:Stat_View="clr-namespace:erp_system.custom_controls"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <local:AmountToHeightConverter x:Key="AmountToHeightConverter"/>
+        <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
     </UserControl.Resources>
-    <UserControl.DataContext>
-        <view_model:Dashboard_View_Model />
-    </UserControl.DataContext>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="20">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#EEEEFA">
+        <Border CornerRadius="16" Background="White" Margin="24" Padding="24">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.08" ShadowDepth="0" BlurRadius="20"/>
+            </Border.Effect>
+            <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Header -->
+                <!-- Header with Quick Actions -->
                 <RowDefinition Height="Auto"/>
                 <!-- Top Summary -->
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <!-- Sales + Recent Activity -->
                 <RowDefinition Height="Auto"/>
                 <!-- Performance Metrics -->
-                <RowDefinition Height="Auto"/>
-                <!-- Quick Actions -->
             </Grid.RowDefinitions>
 
-            <!-- Dashboard Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,20">
+            <!-- Dashboard Header with Quick Actions -->
+            <Grid Grid.Row="0" Margin="0,0,0,24">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="1.5*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Dashboard" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
-                <Button Grid.Column="1" Command="{Binding RefreshCommand}"
-                        Background="#059669" Foreground="White" 
-                        Padding="15,8" BorderThickness="0"
-                        FontWeight="SemiBold">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" 
-                                    CornerRadius="6" 
-                                    Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" 
-                                                VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <TextBlock Text="🔄 Refresh"/>
-                </Button>
+                
+                <!-- Dashboard Title Section -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Dashboard" FontSize="32" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,4"/>
+                    <TextBlock Text="Welcome back! Here's what's happening with your business today." 
+                               FontSize="14" Foreground="#6B7280"/>
+                </StackPanel>
+                
+                <!-- Quick Actions Section -->
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="🚀 Quick Actions" FontWeight="Bold" FontSize="14" Foreground="#1F2937" Margin="0,0,0,8"/>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.4*"/>
+                            <ColumnDefinition Width="1.4*"/>
+                            <ColumnDefinition Width="1.4*"/>
+                            <ColumnDefinition Width="1.4*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Sales -->
+                        <Button Grid.Column="0" Command="{Binding NavigateToSalesCommand}" 
+                                Background="Transparent" BorderThickness="0" Margin="0,0,3,0"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="10" Padding="12" 
+                                            BorderBrush="#E5E7EB" BorderThickness="1"
+                                            Cursor="Hand">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#F0FDF4"/>
+                                                        <Setter Property="BorderBrush" Value="#10B981"/>
+                                                        <Setter Property="BorderThickness" Value="2"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="💲" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                            <TextBlock Text="Sales" FontWeight="Bold" FontSize="11" 
+                                                       Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="NoWrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Performance -->
+                        <Button Grid.Column="1" Command="{Binding NavigateToPerformanceCommand}" 
+                                Background="Transparent" BorderThickness="0" Margin="3,0"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="10" Padding="12" 
+                                            BorderBrush="#E5E7EB" BorderThickness="1"
+                                            Cursor="Hand">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FEF3C7"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="2"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="📈" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                            <TextBlock Text="Performance" FontWeight="Bold" FontSize="11" 
+                                                       Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="NoWrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Payroll -->
+                        <Button Grid.Column="2" Command="{Binding NavigateToPayrollCommand}" 
+                                Background="Transparent" BorderThickness="0" Margin="3,0"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="10" Padding="12" 
+                                            BorderBrush="#E5E7EB" BorderThickness="1"
+                                            Cursor="Hand">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FEF3C7"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="2"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="👤" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                            <TextBlock Text="Payroll" FontWeight="Bold" FontSize="11" 
+                                                       Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="NoWrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Reports -->
+                        <Button Grid.Column="3" Command="{Binding NavigateToInsightsCommand}" 
+                                Background="Transparent" BorderThickness="0" Margin="3,0,0,0"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="10" Padding="12" 
+                                            BorderBrush="#E5E7EB" BorderThickness="1"
+                                            Cursor="Hand">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#F3E8FF"/>
+                                                        <Setter Property="BorderBrush" Value="#8B5CF6"/>
+                                                        <Setter Property="BorderThickness" Value="2"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="📊" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                            <TextBlock Text="Reports" FontWeight="Bold" FontSize="11" 
+                                                       Foreground="#1F2937" HorizontalAlignment="Center" TextWrapping="NoWrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </StackPanel>
             </Grid>
 
-            <!-- ====== TOP SUMMARY CARDS ====== -->
-            <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,20" HorizontalAlignment="Stretch" VerticalAlignment="Top" 
-                         IsItemsHost="False">
-                <!-- Total Employees -->
-                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock Text="Total Employees" FontWeight="SemiBold" Foreground="#555"/>
-                        <TextBlock Text="{Binding QuickStats[0].Value}" FontSize="20" FontWeight="Bold"/>
-                        <Border Background="#FFD84D" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
-                            <TextBlock Text="👥" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <!-- ====== SALES ANALYTICS & PERFORMANCE ====== -->
+            <Border Grid.Row="1" CornerRadius="16" BorderBrush="#E5E7EB" BorderThickness="1" Padding="24" Background="White" Margin="0,0,0,24">
+                <StackPanel>
+                    <!-- Header with Refresh Button -->
+                    <Grid Margin="0,0,0,24">
+                        <TextBlock Text="📊 Sales Analytics &amp; Performance" FontWeight="Bold" FontSize="20" Foreground="#1F2937" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Command="{Binding RefreshCommand}" 
+                                Content="🔄 Refresh" Width="100" Height="40"
+                                Background="#E5E7EB" Foreground="#111827" FontWeight="Bold" 
+                                BorderThickness="0" Cursor="Hand"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- Top Employees by Sales -->
+                        <Border Grid.Column="0" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16" Margin="0,0,12,0" 
+                                MinHeight="220" Background="White">
+                            <StackPanel>
+                                <TextBlock Text="🏆 Top Performers" FontWeight="Bold" FontSize="16" Foreground="#1F2937" Margin="0,0,0,16"/>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="140">
+                                    <ItemsControl ItemsSource="{Binding SalesTopPerformers}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#F8F9FA" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Rank}" FontWeight="Bold" FontSize="11" 
+                                                                  Width="18" VerticalAlignment="Center" Foreground="#666"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding EmployeeName}" VerticalAlignment="Center" 
+                                                                  Margin="6,0" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding TotalSales, StringFormat=₱{0:N0}}" 
+                                                                  FontWeight="SemiBold" VerticalAlignment="Center" FontSize="11" Foreground="#2E7D32"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </StackPanel>
                         </Border>
-                    </StackPanel>
-                </Border>
 
-                <!-- Monthly Sales -->
-                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock Text="Monthly Sales" FontWeight="SemiBold" Foreground="#555"/>
-                        <TextBlock Text="{Binding QuickStats[1].Value, StringFormat=₱{0}}" FontSize="20" FontWeight="Bold"/>
-                        <Border Background="#A7F3D0" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
-                            <TextBlock Text="💲" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <!-- Sales Department Performance -->
+                        <Border Grid.Column="1" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16" Margin="6,0" 
+                                MinHeight="220" Background="White">
+                            <StackPanel>
+                                <TextBlock Text="🏢 Sales Department" FontWeight="Bold" FontSize="16" Foreground="#1F2937" Margin="0,0,0,16"/>
+                                <StackPanel>
+                                    <Border Background="#E3F2FD" CornerRadius="5" Padding="10" Margin="0,0,0,6">
+                                        <StackPanel>
+                                            <TextBlock Text="Total Sales" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding SalesSummary[TotalSales], StringFormat=₱{0:N2}}" 
+                                                       FontSize="14" FontWeight="Bold" Foreground="#1976D2"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#F8F9FA" CornerRadius="5" Padding="10" Margin="0,0,0,6">
+                                        <StackPanel>
+                                            <TextBlock Text="This Month" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding SalesSummary[ThisMonthSales], StringFormat=₱{0:N2}}" 
+                                                       FontSize="12" FontWeight="Bold" Foreground="#2E7D32"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#FFF3E0" CornerRadius="5" Padding="10">
+                                        <StackPanel>
+                                            <TextBlock Text="Transactions" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding SalesSummary[TotalTransactions]}" 
+                                                       FontSize="12" FontWeight="Bold" Foreground="#F57C00"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
                         </Border>
-                    </StackPanel>
-                </Border>
 
-                <!-- Pending Leaves -->
-                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock Text="Pending Leaves" FontWeight="SemiBold" Foreground="#555"/>
-                        <TextBlock Text="{Binding QuickStats[2].Value}" FontSize="20" FontWeight="Bold"/>
-                        <Border Background="#FCD34D" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
-                            <TextBlock Text="📅" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <!-- Monthly Trends -->
+                        <Border Grid.Column="2" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16" Margin="12,0,0,0" 
+                                MinHeight="220" Background="White">
+                            <StackPanel>
+                                <TextBlock Text="📈 Monthly Trends" FontWeight="Bold" FontSize="16" Foreground="#1F2937" Margin="0,0,0,16"/>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="140">
+                                    <ItemsControl ItemsSource="{Binding MonthlyTrends}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#F8F9FA" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Month}" VerticalAlignment="Center" 
+                                                                  FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat=₱{0:N0}}" 
+                                                                  FontWeight="SemiBold" VerticalAlignment="Center" FontSize="11" Foreground="#F57C00"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </StackPanel>
                         </Border>
-                    </StackPanel>
-                </Border>
-
-                <!-- Active Consultants -->
-                <Border CornerRadius="8" Background="White" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock Text="Active Consultants" FontWeight="SemiBold" Foreground="#555"/>
-                        <TextBlock Text="0" FontSize="20" FontWeight="Bold"/>
-                        <Border Background="#E9D5FF" Width="40" Height="40" CornerRadius="8" HorizontalAlignment="Right">
-                            <TextBlock Text="👤" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </Border>
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
             <!-- ====== MIDDLE SECTION ====== -->
-            <Grid Grid.Row="2" Margin="0,0,0,20">
+            <Grid Grid.Row="2" Margin="0,0,0,24">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Monthly Sales Performance -->
-                <Border Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                <Border Background="White" CornerRadius="16" Padding="24" Margin="0,0,12,0" BorderBrush="#E5E7EB" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Monthly Sales Performance" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="📊 Monthly Sales Performance" FontWeight="Bold" FontSize="18" Foreground="#1F2937" Margin="0,0,0,16"/>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -128,46 +330,37 @@
                                 <TextBlock Text="This Month" FontSize="12" Foreground="#666" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                             </StackPanel>
                             
-                            <!-- Simple Bar Chart -->
+                            <!-- Line Chart -->
                             <Border Grid.Row="1" Background="#F9FAFB" CornerRadius="8" Padding="20" MinHeight="120">
-                                <ItemsControl ItemsSource="{Binding MonthlyTrends}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Margin="5" VerticalAlignment="Bottom">
-                                                <Border Background="#3B82F6" 
-                                                        Width="30" 
-                                                        Height="{Binding Amount, Converter={StaticResource AmountToHeightConverter}}"
-                                                        CornerRadius="4,4,0,0"
-                                                        VerticalAlignment="Bottom"/>
-                                                <TextBlock Text="{Binding Month}" 
-                                                           FontSize="10" 
-                                                           HorizontalAlignment="Center" 
-                                                           Margin="0,5,0,0"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                <Grid>
+                                    <!-- Chart Content -->
+                                    <lvc:CartesianChart Series="{Binding MonthlySalesSeries}" Height="120">
+                                        <lvc:CartesianChart.AxisX>
+                                            <lvc:Axis Labels="{Binding MonthlySalesLabels}" FontSize="10"/>
+                                        </lvc:CartesianChart.AxisX>
+                                        <lvc:CartesianChart.AxisY>
+                                            <lvc:Axis FontSize="10"/>
+                                        </lvc:CartesianChart.AxisY>
+                                    </lvc:CartesianChart>
+                                    
+                                    <!-- No Data Message -->
+                                    <TextBlock Text="No sales data available for the last 6 months" 
+                                               FontSize="14" 
+                                               Foreground="#666" 
+                                               HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center"
+                                               Visibility="{Binding MonthlySalesSeries.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                                </Grid>
                             </Border>
                             
-                            <!-- Top Performer -->
-                            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
-                                <TextBlock Text="🏆 Top Performer: " FontWeight="SemiBold" Foreground="#666"/>
-                                <TextBlock Text="{Binding TopPerformerName}" FontWeight="Bold" Foreground="#059669"/>
-                                <TextBlock Text="{Binding TopPerformerSales, StringFormat= (₱{0:N0})}" FontSize="12" Foreground="#666" Margin="5,0,0,0"/>
-                            </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
 
                 <!-- Recent Activity -->
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                <Border Grid.Column="1" Background="White" CornerRadius="16" Padding="24" Margin="12,0,0,0" BorderBrush="#E5E7EB" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Recent Activity" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="🔔 Recent Activity" FontWeight="Bold" FontSize="18" Foreground="#1F2937" Margin="0,0,0,16"/>
                         <ScrollViewer Height="200" VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding RecentActivities}">
                                 <ItemsControl.ItemTemplate>
@@ -192,122 +385,135 @@
             </Grid>
 
             <!-- ====== PERFORMANCE METRICS ====== -->
-            <Grid Grid.Row="3" Margin="0,0,0,20">
+            <Grid Grid.Row="3" Margin="0,0,0,24">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Performance Overview -->
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                <!-- Performance Statistics -->
+                <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="16" Margin="0,0,12,0" BorderBrush="#E5E7EB" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Performance Overview" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <TextBlock Text="{Binding AveragePerformanceScore, StringFormat={}{0:F1}}" 
-                                       FontSize="20" FontWeight="Bold" Foreground="#059669"/>
-                            <TextBlock Text="/5.0" FontSize="12" Foreground="#666" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                        </StackPanel>
-                        <TextBlock Text="Average Score" FontSize="12" Foreground="#666"/>
-                        <TextBlock Text="Based on recent reviews" FontSize="10" Foreground="#999" Margin="0,5,0,0"/>
+                        <TextBlock Text="📊 Performance Statistics" FontWeight="Bold" FontSize="18" Foreground="#1F2937" Margin="0,0,0,10"/>
+                        
+                        <!-- Total Evaluations - Main Metric -->
+                        <Border Background="#F0F9FF" CornerRadius="8" Padding="10" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="{Binding TotalEvaluations}" 
+                                           FontSize="28" FontWeight="Bold" Foreground="#3B82F6" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Total Evaluations" FontSize="13" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Performance Breakdown -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- High Performers -->
+                            <Border Grid.Column="0" Background="#F0FDF4" CornerRadius="6" Padding="8" Margin="0,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding HighPerformers}" FontSize="16" FontWeight="Bold" Foreground="#059669" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="High" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    <TextBlock Text="≥ 4.0" FontSize="9" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Average Performers -->
+                            <Border Grid.Column="1" Background="#FFFBEB" CornerRadius="6" Padding="8" Margin="3,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding AveragePerformers}" FontSize="16" FontWeight="Bold" Foreground="#F59E0B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Average" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    <TextBlock Text="2.5-3.9" FontSize="9" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Low Performers -->
+                            <Border Grid.Column="2" Background="#FEF2F2" CornerRadius="6" Padding="8" Margin="3,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding LowPerformers}" FontSize="16" FontWeight="Bold" Foreground="#DC2626" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Low" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    <TextBlock Text="1.0-2.4" FontSize="9" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                        
+                        <!-- Performance Summary -->
+                        <Border Background="#F8FAFC" CornerRadius="8" Padding="10" Margin="0,8,0,0" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="{Binding HighPerformanceRate, StringFormat={}{0:F0}%}" FontSize="24" FontWeight="Bold" Foreground="#059669" HorizontalAlignment="Center"/>
+                                <TextBlock Text="High Performance Rate" FontSize="12" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Performance Insights -->
+                        <Border Background="#F0F9FF" CornerRadius="6" Padding="8" Margin="0,6,0,0" BorderBrush="#BFDBFE" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="📈 Performance Insights" FontSize="12" FontWeight="SemiBold" Foreground="#1E40AF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <TextBlock Text="High performance rate shows the percentage of employees meeting or exceeding performance expectations." 
+                                           TextWrapping="Wrap" FontSize="11" Foreground="#475569" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="14"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Border>
 
-                <!-- Top Performers -->
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
+                <!-- Department Performance -->
+                <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="16" Margin="12,0,0,0" BorderBrush="#E5E7EB" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Top Performers" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <ScrollViewer Height="120" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding TopPerformers}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2">
-                                            <TextBlock Text="{Binding Rank}" FontWeight="Bold" Width="20" Foreground="#059669"/>
-                                            <TextBlock Text="{Binding EmployeeName}" FontSize="12" Margin="5,0,0,0"/>
-                                            <TextBlock Text="{Binding TotalSales, StringFormat=₱{0:N0}}" 
-                                                       FontSize="10" Foreground="#666" 
-                                                       HorizontalAlignment="Right" Margin="5,0,0,0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </StackPanel>
-                </Border>
-
-                <!-- Leave Status -->
-                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="20" Margin="10" BorderBrush="#EEE" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock Text="Leave Status" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <TextBlock Text="{Binding PendingLeaves}" 
-                                       FontSize="20" FontWeight="Bold" Foreground="#F59E0B"/>
-                            <TextBlock Text=" pending" FontSize="12" Foreground="#666" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                        </StackPanel>
-                        <TextBlock Text="Leave requests" FontSize="12" Foreground="#666"/>
-                        <TextBlock Text="Awaiting approval" FontSize="10" Foreground="#999" Margin="0,5,0,0"/>
+                        <TextBlock Text="🏢 Department Performance" FontWeight="Bold" FontSize="18" Foreground="#1F2937" Margin="0,0,0,10"/>
+                        
+                        <!-- Header Row -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Rank" FontWeight="SemiBold" FontSize="12" Foreground="#64748B" Width="30"/>
+                            <TextBlock Grid.Column="1" Text="Department" FontWeight="SemiBold" FontSize="12" Foreground="#64748B" Margin="8,0,0,0"/>
+                            <TextBlock Grid.Column="2" Text="Score" FontWeight="SemiBold" FontSize="12" Foreground="#64748B"/>
+                        </Grid>
+                        
+                        <!-- Department List -->
+                        <ItemsControl ItemsSource="{Binding TopDepartments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F8FAFC" CornerRadius="6" Padding="8" Margin="0,0,0,6" BorderBrush="#E2E8F0" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Rank Badge -->
+                                            <Border Grid.Column="0" Background="#3B82F6" CornerRadius="12" Width="24" Height="24" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Rank}" FontWeight="Bold" FontSize="11" 
+                                                          Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            
+                                            <!-- Department Name -->
+                                            <TextBlock Grid.Column="1" Text="{Binding DepartmentName}" VerticalAlignment="Center" 
+                                                      Margin="10,0" FontSize="13" FontWeight="Medium" TextTrimming="CharacterEllipsis" Foreground="#1F2937"/>
+                                            
+                                            <!-- Score with Color Coding -->
+                                            <Border Grid.Column="2" Background="#F0FDF4" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding AverageScore, StringFormat={}{0:F1}}" 
+                                                          FontWeight="Bold" FontSize="12" Foreground="#059669" HorizontalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <!-- ====== QUICK ACTIONS ====== -->
-            <UniformGrid Grid.Row="4" Columns="4" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <!-- Add Employee -->
-                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                        Background="Transparent" BorderThickness="0" 
-                        Command="{Binding NavigateToEmployeesCommand}"
-                        Margin="10">
-                    <Border CornerRadius="8" Background="White" Padding="20" BorderBrush="#EEE" BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="👥" FontSize="20"/>
-                            <TextBlock Text="Add Employee" FontWeight="Bold"/>
-                            <TextBlock Text="Create new employee profile" FontSize="12" Foreground="#777"/>
-                        </StackPanel>
-                    </Border>
-                </Button>
-
-                <!-- Record Sale -->
-                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                        Background="Transparent" BorderThickness="0" 
-                        Command="{Binding NavigateToSalesCommand}"
-                        Margin="10">
-                    <Border CornerRadius="8" Background="White" Padding="20" BorderBrush="#EEE" BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="💲" FontSize="20"/>
-                            <TextBlock Text="Record Sale" FontWeight="Bold"/>
-                            <TextBlock Text="Add new perfume sale" FontSize="12" Foreground="#777"/>
-                        </StackPanel>
-                    </Border>
-                </Button>
-
-                <!-- Process Payroll -->
-                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                        Background="Transparent" BorderThickness="0" 
-                        Command="{Binding NavigateToPayrollCommand}"
-                        Margin="10">
-                    <Border CornerRadius="8" Background="White" Padding="20" BorderBrush="#EEE" BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="👤" FontSize="20"/>
-                            <TextBlock Text="Process Payroll" FontWeight="Bold"/>
-                            <TextBlock Text="Calculate monthly payroll" FontSize="12" Foreground="#777"/>
-                        </StackPanel>
-                    </Border>
-                </Button>
-
-                <!-- Generate Report -->
-                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                        Background="Transparent" BorderThickness="0" 
-                        Command="{Binding NavigateToInsightsCommand}"
-                        Margin="10">
-                    <Border CornerRadius="8" Background="White" Padding="20" BorderBrush="#EEE" BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="📅" FontSize="20"/>
-                            <TextBlock Text="Generate Report" FontWeight="Bold"/>
-                            <TextBlock Text="Export business reports" FontSize="12" Foreground="#777"/>
-                        </StackPanel>
-                    </Border>
-                </Button>
-            </UniformGrid>
         </Grid>
+        </Border>
     </ScrollViewer>
 </UserControl>

@@ -12,10 +12,14 @@ namespace erp_system.model
 
     public class DepartmentPerformance_Model
     {
+        public int DepartmentID { get; set; }
         public string DepartmentName { get; set; } = string.Empty;
         public decimal TotalSales { get; set; }
         public int TransactionCount { get; set; }
         public decimal AverageSale { get; set; }
+        public decimal AverageScore { get; set; }
+        public int TotalEmployees { get; set; }
+        public string Rank { get; set; } = string.Empty;
     }
 
     public class MonthlyTrend_Model

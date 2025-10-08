@@ -28,9 +28,6 @@ namespace erp_system.Services
             // Calculate basic statistics
             analytics.TotalEvaluations = performanceRecords.Count;
             analytics.AverageScore = performanceRecords.Average(p => p.Score);
-            analytics.SalesAchievementRate = performanceRecords.Where(p => p.SalesTarget > 0).Any() 
-                ? performanceRecords.Where(p => p.SalesTarget > 0).Average(p => p.SalesAchievementPercentage)
-                : 0;
 
             // Categorize performers
             analytics.HighPerformers = performanceRecords.Count(p => p.Score >= 4.0m);
@@ -68,10 +65,7 @@ namespace erp_system.Services
                 {
                     Period = $"{g.Key.Year}-{g.Key.Month:D2}",
                     AverageScore = g.Average(p => p.Score),
-                    EvaluationCount = g.Count(),
-                    SalesAchievement = g.Where(p => p.SalesTarget > 0).Any() 
-                        ? g.Where(p => p.SalesTarget > 0).Average(p => p.SalesAchievementPercentage)
-                        : 0
+                    EvaluationCount = g.Count()
                 })
                 .ToList();
 
@@ -122,14 +116,19 @@ namespace erp_system.Services
             }).ToList();
         }
 
-        public List<ChartDataPoint> GetSalesAchievementData()
+        public List<ChartDataPoint> GetReviewTypeData()
         {
-            var analytics = GetPerformanceAnalytics();
-            return analytics.PerformanceTrends.Select(trend => new ChartDataPoint
-            {
-                Label = trend.Period,
-                Value = (double)trend.SalesAchievement
-            }).ToList();
+            var performanceRecords = _dataService.GetPerformanceRecords();
+            return performanceRecords
+                .Where(p => !string.IsNullOrEmpty(p.ReviewType))
+                .GroupBy(p => p.ReviewType)
+                .Select(g => new ChartDataPoint
+                {
+                    Label = g.Key,
+                    Value = (double)g.Average(p => p.Score)
+                })
+                .OrderByDescending(d => d.Value)
+                .ToList();
         }
 
         public Dictionary<string, object> GetPerformanceSummary()
@@ -139,7 +138,6 @@ namespace erp_system.Services
             {
                 ["TotalEvaluations"] = analytics.TotalEvaluations,
                 ["AverageScore"] = Math.Round(analytics.AverageScore, 2),
-                ["SalesAchievementRate"] = Math.Round(analytics.SalesAchievementRate, 1),
                 ["HighPerformers"] = analytics.HighPerformers,
                 ["AveragePerformers"] = analytics.AveragePerformers,
                 ["LowPerformers"] = analytics.LowPerformers,
@@ -151,7 +149,7 @@ namespace erp_system.Services
 
         // Filter Methods
         public List<Performance_Model> GetFilteredPerformanceRecords(DateTime startDate, DateTime endDate, 
-            string department, string employee, decimal minScore, decimal maxScore, string reviewType, string salesAchievement)
+            string department, string employee, decimal minScore, decimal maxScore, string reviewType)
         {
             var allRecords = _dataService.GetPerformanceRecords();
             
@@ -176,36 +174,18 @@ namespace erp_system.Services
                         return false;
                 }
 
-                // Review type filter (use default value for removed filter)
+                // Review type filter
                 if (reviewType != "All" && record.ReviewType != reviewType)
                     return false;
-
-                // Sales achievement filter (use default value for removed filter)
-                if (salesAchievement != "All")
-                {
-                    var achievement = record.SalesAchievementPercentage;
-                    switch (salesAchievement)
-                    {
-                        case "High (100%+)":
-                            if (achievement < 100) return false;
-                            break;
-                        case "Medium (80-99%)":
-                            if (achievement < 80 || achievement >= 100) return false;
-                            break;
-                        case "Low (<80%)":
-                            if (achievement >= 80) return false;
-                            break;
-                    }
-                }
 
                 return true;
             }).ToList();
         }
 
         public List<ChartDataPoint> GetFilteredScoreDistributionData(DateTime startDate, DateTime endDate, 
-            string department, string employee, decimal minScore, decimal maxScore, string reviewType, string salesAchievement)
+            string department, string employee, decimal minScore, decimal maxScore, string reviewType)
         {
-            var filteredRecords = GetFilteredPerformanceRecords(startDate, endDate, department, employee, minScore, maxScore, reviewType, salesAchievement);
+            var filteredRecords = GetFilteredPerformanceRecords(startDate, endDate, department, employee, minScore, maxScore, reviewType);
             
             var scoreRanges = new[]
             {
@@ -224,9 +204,9 @@ namespace erp_system.Services
         }
 
         public List<ChartDataPoint> GetFilteredDepartmentPerformanceData(DateTime startDate, DateTime endDate, 
-            string department, string employee, decimal minScore, decimal maxScore, string reviewType, string salesAchievement)
+            string department, string employee, decimal minScore, decimal maxScore, string reviewType)
         {
-            var filteredRecords = GetFilteredPerformanceRecords(startDate, endDate, department, employee, minScore, maxScore, reviewType, salesAchievement);
+            var filteredRecords = GetFilteredPerformanceRecords(startDate, endDate, department, employee, minScore, maxScore, reviewType);
             
             return filteredRecords
                 .Where(p => !string.IsNullOrEmpty(p.Department))

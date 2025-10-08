@@ -45,13 +45,33 @@ namespace erp_system
             // Start with Login View
             var Login_View = new Login_View();
             Login_View.Show();
+            
+            bool isHandlingClose = false;
             Login_View.IsVisibleChanged += (s, ev) =>
             {
-                if (Login_View.IsVisible == false && Login_View.IsLoaded)
+                if (Login_View.IsVisible == false && Login_View.IsLoaded && !isHandlingClose)
                 {
-                    var mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    Login_View.Close();
+                    isHandlingClose = true;
+                    try
+                    {
+                        var mainWindow = new MainWindow();
+                        mainWindow.Show();
+                        Application.Current.MainWindow = mainWindow;
+                        
+                        // Only close if the window is not already closing
+                        try
+                        {
+                            Login_View.Close();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // Window is already closing, ignore the error
+                        }
+                    }
+                    finally
+                    {
+                        isHandlingClose = false;
+                    }
                 }
             };
         }

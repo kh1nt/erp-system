@@ -15,12 +15,11 @@
                             BorderThickness="4,0,0,0"
                             BorderBrush="{TemplateBinding BorderBrush}">
                         <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-
+        
         <Style.Triggers>
             <!-- Mouse On Hover Back Color -->
             <Trigger Property="IsMouseOver" Value="True">
@@ -38,6 +37,7 @@
                 <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
             </Trigger>
         </Style.Triggers>
+
     </Style>
 
     <!-- Button Icon -->
